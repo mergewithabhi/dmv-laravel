@@ -6,16 +6,23 @@ use App\Models\MediaAsset;
 use App\Models\SiteSetting;
 use App\Rules\SafeUrl;
 use App\Services\SiteChromeService;
+use App\Services\AdminMediaUploadService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('components.layouts.admin')]
 class SettingsEditor extends Component
 {
+    use WithFileUploads;
+
     public array $values = [];
+
+    public array $mediaUploads = [];
 
     #[Locked]
     public array $versions = [];
@@ -74,13 +81,49 @@ class SettingsEditor extends Component
         session()->flash('success', 'Global settings were saved.');
     }
 
+    public function selectMedia(int $settingId, ?int $assetId): void
+    {
+        $this->authorizeAccess();
+        $setting = SiteSetting::query()->where('type', 'media')->findOrFail($settingId);
+        if ($assetId) {
+            abort_unless(MediaAsset::query()->whereKey($assetId)->whereIn('kind', ['image', 'icon'])->exists(), 422);
+        }
+        $this->values[$setting->id] = $assetId;
+    }
+
+    public function uploadMedia(int $settingId, AdminMediaUploadService $uploader): void
+    {
+        $this->authorizeAccess();
+        $setting = SiteSetting::query()->where('type', 'media')->findOrFail($settingId);
+        $key = "setting-{$settingId}";
+        $validator = Validator::make(
+            ['upload' => $this->mediaUploads[$key] ?? null],
+            ['upload' => ['required', 'file', 'max:'.config('cms.max_upload_kilobytes')]]
+        );
+        if ($validator->fails()) {
+            $this->addError("mediaUploads.{$key}", $validator->errors()->first('upload'));
+
+            return;
+        }
+
+        try {
+            $asset = $uploader->store($this->mediaUploads[$key], 'image', $setting->label);
+        } catch (ValidationException $exception) {
+            $this->addError("mediaUploads.{$key}", $exception->errors()['upload'][0] ?? 'Upload failed.');
+
+            return;
+        }
+        $this->values[$settingId] = $asset->id;
+        unset($this->mediaUploads[$key]);
+    }
+
     public function render()
     {
         $this->authorizeAccess();
 
         return view('livewire.admin.settings-editor', [
             'groups' => SiteSetting::query()->orderBy('group')->orderBy('label')->get()->groupBy('group'),
-            'media' => MediaAsset::query()->orderBy('title')->get(),
+            'media' => MediaAsset::query()->with('media')->orderBy('title')->get(),
         ])->title('Settings')->layoutData(['heading' => 'Global Settings']);
     }
 

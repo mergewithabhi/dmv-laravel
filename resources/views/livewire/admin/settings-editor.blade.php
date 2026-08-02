@@ -11,7 +11,17 @@
                             @if ($setting->type === 'textarea')
                                 <textarea id="setting-{{ $setting->id }}" wire:model="values.{{ $setting->id }}"></textarea>
                             @elseif ($setting->type === 'media')
-                                <select id="setting-{{ $setting->id }}" wire:model="values.{{ $setting->id }}"><option value="">No media</option>@foreach($media as $asset)<option value="{{ $asset->id }}">{{ $asset->title }}</option>@endforeach</select>
+                                @include('livewire.admin.partials.media-field', [
+                                    'assets' => $media,
+                                    'selectedId' => $values[$setting->id] ?? null,
+                                    'inputKind' => 'image',
+                                    'inputId' => "setting-{$setting->id}",
+                                    'uploadKey' => "setting-{$setting->id}",
+                                    'acceptedTypes' => '.jpg,.jpeg,.png,.webp,.gif',
+                                    'uploadAction' => "uploadMedia({$setting->id})",
+                                    'clearAction' => "selectMedia({$setting->id}, null)",
+                                    'selectAction' => fn ($assetId) => "selectMedia({$setting->id}, {$assetId})",
+                                ])
                             @else
                                 <input id="setting-{{ $setting->id }}" type="{{ in_array($setting->type, ['email','url','number']) ? $setting->type : 'text' }}" wire:model="values.{{ $setting->id }}">
                             @endif

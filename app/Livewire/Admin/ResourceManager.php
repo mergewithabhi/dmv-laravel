@@ -7,6 +7,7 @@ use App\Enums\PublicationStatus;
 use App\Models\Category;
 use App\Models\ContentRevision;
 use App\Models\Game;
+use App\Models\MediaAsset;
 use App\Models\NavigationItem;
 use App\Models\Person;
 use App\Models\Post;
@@ -20,6 +21,7 @@ use App\Models\Team;
 use App\Models\Venue;
 use App\Rules\SafeUrl;
 use App\Services\ResourceWorkflowService;
+use App\Services\AdminMediaUploadService;
 use App\Services\SiteChromeService;
 use BackedEnum;
 use Illuminate\Database\Eloquent\Model;
@@ -31,12 +33,13 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 #[Layout('components.layouts.admin')]
 class ResourceManager extends Component
 {
-    use WithPagination;
+    use WithFileUploads, WithPagination;
 
     #[Locked]
     public string $resource;
@@ -60,6 +63,12 @@ class ResourceManager extends Component
     public array $form = [];
 
     public array $selected = [];
+
+    public array $mediaUploads = [];
+
+    public array $repeaters = [];
+
+    public bool $slugManuallyEdited = false;
 
     public bool $showEditor = false;
 
@@ -158,13 +167,18 @@ class ResourceManager extends Component
         $this->editingId = null;
         $this->originalLockVersion = null;
         $this->form = [];
+        $this->repeaters = [];
+        $this->slugManuallyEdited = false;
 
         foreach ($config['fields'] as $key => $field) {
             $this->form[$key] = match ($field['type']) {
                 'checkbox' => false,
                 'json' => '',
-                default => in_array($key, ['status', 'publication_status'], true) ? 'draft' : '',
+                default => in_array($key, ['status', 'publication_status'], true) ? 'published' : '',
             };
+            if ($field['type'] === 'json') {
+                $this->repeaters[$key] = [];
+            }
         }
 
         if (array_key_exists('timezone', $config['fields'])) {
@@ -184,6 +198,8 @@ class ResourceManager extends Component
             ($config['workflow'] ?? false) ? 'draft_lock_version' : 'lock_version'
         );
         $this->form = [];
+        $this->repeaters = [];
+        $this->slugManuallyEdited = true;
         $snapshot = ($config['workflow'] ?? false)
             ? ($model->getAttribute('draft_snapshot') ?: [])
             : [];
@@ -202,6 +218,7 @@ class ResourceManager extends Component
                     ? $value->format('Y-m-d')
                     : $value->format('Y-m-d\TH:i');
             } elseif ($field['type'] === 'json') {
+                $this->repeaters[$key] = $this->repeaterRows($value);
                 $value = $value ? json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : '';
             }
             $this->form[$key] = $value ?? ($field['type'] === 'checkbox' ? false : '');
@@ -217,6 +234,7 @@ class ResourceManager extends Component
         SiteChromeService $chrome
     ): void {
         $config = $this->authorizedConfig($registry);
+        $this->syncRepeaters($config);
         $validated = $this->validate($this->validationRules($config))['form'];
         $statusField = $config['status_field'] ?? null;
 
@@ -303,6 +321,77 @@ class ResourceManager extends Component
         $chrome->forget();
         session()->flash('success', 'The record was saved.');
         $this->showEditor = false;
+    }
+
+    public function updatedForm(mixed $value, string $key): void
+    {
+        if ($key === 'slug') {
+            $this->slugManuallyEdited = true;
+
+            return;
+        }
+        if (
+            in_array($key, ['name', 'title', 'display_name'], true)
+            && array_key_exists('slug', $this->form)
+            && ! $this->slugManuallyEdited
+        ) {
+            $this->form['slug'] = Str::slug((string) $value);
+        }
+    }
+
+    public function addRepeaterItem(string $fieldKey, ResourceRegistry $registry): void
+    {
+        $field = $this->authorizedConfig($registry)['fields'][$fieldKey] ?? null;
+        abort_unless(($field['type'] ?? null) === 'json', 422);
+        $this->repeaters[$fieldKey][] = ['key' => '', 'value' => ''];
+    }
+
+    public function removeRepeaterItem(string $fieldKey, int $index, ResourceRegistry $registry): void
+    {
+        $field = $this->authorizedConfig($registry)['fields'][$fieldKey] ?? null;
+        abort_unless(($field['type'] ?? null) === 'json', 422);
+        unset($this->repeaters[$fieldKey][$index]);
+        $this->repeaters[$fieldKey] = array_values($this->repeaters[$fieldKey]);
+    }
+
+    public function selectMedia(string $fieldKey, ?int $assetId, ResourceRegistry $registry): void
+    {
+        $config = $this->authorizedConfig($registry);
+        $field = $config['fields'][$fieldKey] ?? null;
+        abort_unless($field && in_array($field['options'], ['media_images', 'media_icons'], true), 422);
+        if ($assetId) {
+            $allowedKinds = $field['options'] === 'media_icons' ? ['icon'] : ['image', 'icon'];
+            abort_unless(MediaAsset::query()->whereKey($assetId)->whereIn('kind', $allowedKinds)->exists(), 422);
+        }
+        $this->form[$fieldKey] = $assetId;
+    }
+
+    public function uploadMedia(
+        string $fieldKey,
+        ResourceRegistry $registry,
+        AdminMediaUploadService $uploader
+    ): void {
+        $config = $this->authorizedConfig($registry);
+        $field = $config['fields'][$fieldKey] ?? null;
+        abort_unless($field && in_array($field['options'], ['media_images', 'media_icons'], true), 422);
+        $kind = $field['options'] === 'media_icons' ? 'icon' : 'image';
+        $key = "resource-{$fieldKey}";
+        $upload = $this->mediaUploads[$key] ?? null;
+        if (! $upload) {
+            $this->addError("mediaUploads.{$key}", 'Choose a file first.');
+
+            return;
+        }
+
+        try {
+            $asset = $uploader->store($upload, $kind, $field['label']);
+        } catch (ValidationException $exception) {
+            $this->addError("mediaUploads.{$key}", $exception->errors()['upload'][0] ?? 'Upload failed.');
+
+            return;
+        }
+        $this->form[$fieldKey] = $asset->id;
+        unset($this->mediaUploads[$key]);
     }
 
     public function delete(
@@ -484,13 +573,15 @@ class ResourceManager extends Component
         if (isset($options['publication_statuses']) && ! array_key_exists('publish_at', $config['fields'])) {
             unset($options['publication_statuses'][PublicationStatus::Scheduled->value]);
         }
+        $media = MediaAsset::query()->with('media')->orderBy('title')->get();
 
         return view('livewire.admin.resource-manager', compact(
             'config',
             'rows',
             'options',
             'revisions',
-            'statusOptions'
+            'statusOptions',
+            'media'
         ))
             ->title($config['label'])
             ->layoutData(['heading' => $config['label']]);
@@ -635,6 +726,40 @@ class ResourceManager extends Component
                 'form.home_team_id' => 'Each game must include the DMV Warriors exactly once.',
                 'form.away_team_id' => 'Each game must include the DMV Warriors exactly once.',
             ]);
+        }
+    }
+
+    private function repeaterRows(mixed $value): array
+    {
+        if (! is_array($value)) {
+            return [];
+        }
+        if (array_is_list($value)) {
+            return collect($value)->map(fn ($item) => [
+                'key' => '',
+                'value' => is_scalar($item) ? (string) $item : json_encode($item, JSON_UNESCAPED_SLASHES),
+            ])->all();
+        }
+
+        return collect($value)->map(fn ($item, $key) => [
+            'key' => (string) $key,
+            'value' => is_scalar($item) ? (string) $item : json_encode($item, JSON_UNESCAPED_SLASHES),
+        ])->values()->all();
+    }
+
+    private function syncRepeaters(array $config): void
+    {
+        foreach ($config['fields'] as $key => $field) {
+            if ($field['type'] !== 'json') {
+                continue;
+            }
+            $rows = collect($this->repeaters[$key] ?? [])
+                ->filter(fn ($row) => filled($row['key'] ?? null) || filled($row['value'] ?? null));
+            $hasKeys = $rows->contains(fn ($row) => filled($row['key'] ?? null));
+            $value = $hasKeys
+                ? $rows->mapWithKeys(fn ($row) => [(string) $row['key'] => (string) ($row['value'] ?? '')])->all()
+                : $rows->pluck('value')->values()->all();
+            $this->form[$key] = $value === [] ? '' : json_encode($value, JSON_UNESCAPED_SLASHES);
         }
     }
 

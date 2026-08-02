@@ -4,7 +4,7 @@ return [
     'alert_email' => env('CMS_ALERT_EMAIL'),
 
     'security' => [
-        'require_two_factor' => (bool) env('CMS_REQUIRE_TWO_FACTOR', true),
+        'require_two_factor' => filter_var(env('CMS_REQUIRE_TWO_FACTOR', true), FILTER_VALIDATE_BOOLEAN),
     ],
 
     'static_import_asset_sources' => [

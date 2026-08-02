@@ -133,7 +133,7 @@ class AdminInteractionAuditTest extends TestCase
 
         Livewire::actingAs($editor)
             ->test(Dashboard::class)
-            ->assertSee('Review pages')
+            ->assertSee('Edit website pages')
             ->assertDontSee('Recent submissions')
             ->assertDontSee('Private Visitor')
             ->assertDontSee('Upcoming games');

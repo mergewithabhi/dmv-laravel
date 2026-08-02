@@ -66,6 +66,52 @@ class PageWorkflowService
         });
     }
 
+    public function publishDirect(
+        Page $page,
+        array $snapshot,
+        int $expectedLockVersion,
+        User $user
+    ): Page {
+        return DB::transaction(function () use ($page, $snapshot, $expectedLockVersion, $user): Page {
+            $locked = Page::query()->lockForUpdate()->with('sections')->findOrFail($page->id);
+            if ((int) $locked->draft_lock_version !== $expectedLockVersion) {
+                throw ValidationException::withMessages([
+                    'pageForm' => 'Someone else saved this page. Reload it before saving your changes.',
+                ]);
+            }
+
+            $locked->forceFill(($snapshot['page'] ?? []) + [
+                'status' => PublicationStatus::Published->value,
+                'workflow_status' => PublicationStatus::Published->value,
+                'draft_snapshot' => null,
+                'draft_saved_at' => null,
+                'submitted_by' => null,
+                'approved_by' => $user->getKey(),
+                'publish_at' => null,
+                'published_at' => now(),
+                'lock_version' => $locked->lock_version + 1,
+                'draft_lock_version' => $locked->draft_lock_version + 1,
+            ])->saveQuietly();
+
+            foreach ($snapshot['sections'] ?? [] as $sectionId => $values) {
+                $section = $locked->sections->firstWhere('id', (int) $sectionId);
+                if (! $section) {
+                    continue;
+                }
+                $section->forceFill([
+                    'is_enabled' => (bool) ($values['is_enabled'] ?? true),
+                    'payload' => $values['payload'] ?? [],
+                    'lock_version' => $section->lock_version + 1,
+                ])->saveQuietly();
+                $section->recordRevision('published');
+            }
+
+            $this->recordDraftRevision($locked, $snapshot, 'published', $user);
+
+            return $locked->refresh()->load('sections');
+        });
+    }
+
     public function submit(Page $page, User $user): Page
     {
         return DB::transaction(function () use ($page, $user): Page {
@@ -146,6 +192,19 @@ class PageWorkflowService
             return $page;
         }
 
+        $page->forceFill($snapshot['page'] ?? []);
+        foreach ($page->sections as $section) {
+            if ($values = $snapshot['sections'][$section->id] ?? null) {
+                $section->forceFill($values);
+            }
+        }
+
+        return $page;
+    }
+
+    public function applySnapshotForPreview(Page $page, array $snapshot): Page
+    {
+        $page->loadMissing('sections');
         $page->forceFill($snapshot['page'] ?? []);
         foreach ($page->sections as $section) {
             if ($values = $snapshot['sections'][$section->id] ?? null) {

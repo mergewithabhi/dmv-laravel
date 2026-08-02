@@ -39,8 +39,11 @@ class ContentPermissionGrantTest extends TestCase
             ->assertHasNoErrors();
 
         $page->refresh();
-        $this->assertSame('Edited by contributor', $page->draft_snapshot['sections'][$heroSection->id]['payload']['headline']);
-        $this->assertSame('Intro copy', $page->draft_snapshot['sections'][$introSection->id]['payload']['body']);
+        $heroSection->refresh();
+        $introSection->refresh();
+        $this->assertSame('Edited by contributor', $heroSection->payload['headline']);
+        $this->assertSame('Intro copy', $introSection->payload['body']);
+        $this->assertNull($page->draft_snapshot);
     }
 
     public function test_user_without_any_grant_or_manage_pages_cannot_open_the_page_editor(): void
@@ -96,8 +99,9 @@ class ContentPermissionGrantTest extends TestCase
             ->assertHasNoErrors();
 
         $page->refresh();
-        $this->assertSame('Retitled by super admin', $page->draft_snapshot['page']['title']);
-        $this->assertSame('Super admin edit', $page->draft_snapshot['sections'][$heroSection->id]['payload']['headline']);
+        $heroSection->refresh();
+        $this->assertSame('Retitled by super admin', $page->title);
+        $this->assertSame('Super admin edit', $heroSection->payload['headline']);
     }
 
     public function test_only_super_admin_can_manage_content_permission_grants(): void

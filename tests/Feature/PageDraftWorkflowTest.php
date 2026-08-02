@@ -20,7 +20,7 @@ class PageDraftWorkflowTest extends TestCase
 {
     use CreatesCmsUsers, RefreshDatabase;
 
-    public function test_a_newly_converted_media_field_stays_a_placeholder_on_the_live_page_until_published(): void
+    public function test_a_newly_selected_media_field_is_published_when_changes_are_saved(): void
     {
         Storage::fake('public');
         [$page, $section, $fieldId] = $this->publishedPageWithHeroMediaField();
@@ -37,10 +37,6 @@ class PageDraftWorkflowTest extends TestCase
             ->set("sections.{$section->id}.payload.{$fieldId}", (string) $asset->id)
             ->call('save')
             ->assertHasNoErrors();
-
-        $this->get('/about')->assertOk()->assertDontSee($asset->url('web'), false);
-
-        $component->call('submit')->call('publish')->assertHasNoErrors();
 
         $this->get('/about')->assertOk()->assertSee($asset->url('web'), false);
     }
@@ -73,7 +69,7 @@ class PageDraftWorkflowTest extends TestCase
         return [$page->refresh()->load('sections'), $section->refresh(), $fieldId];
     }
 
-    public function test_draft_and_review_preserve_live_content_until_publisher_approval(): void
+    public function test_authorized_editor_changes_are_published_immediately(): void
     {
         [$page, $section] = $this->publishedPage();
         $editor = $this->cmsUser(['manage pages'], 'Editor');
@@ -87,36 +83,12 @@ class PageDraftWorkflowTest extends TestCase
 
         $page->refresh();
         $section->refresh();
-        $this->assertSame('Live About', $page->title);
-        $this->assertSame('Live headline', $section->payload['headline']);
-        $this->assertSame(PublicationStatus::Published, $page->status);
-        $this->assertSame(PublicationStatus::Draft, $page->workflow_status);
-        $this->assertSame('Draft About', $page->draft_snapshot['page']['title']);
-        $this->assertTrue(Page::query()->published()->whereKey($page)->exists());
-
-        $editorComponent->call('submit')->assertHasNoErrors();
-        $page->refresh();
-        $this->assertSame(PublicationStatus::Published, $page->status);
-        $this->assertSame(PublicationStatus::InReview, $page->workflow_status);
-        $this->assertSame('Live About', $page->title);
-        $this->assertTrue(Page::query()->published()->whereKey($page)->exists());
-
-        $editorComponent->call('publish')->assertForbidden();
-        $this->assertSame(PublicationStatus::InReview, $page->refresh()->workflow_status);
-
-        $publisher = $this->cmsUser(['manage pages', 'publish content'], 'Publisher');
-        Livewire::actingAs($publisher)
-            ->test(PageEditor::class, ['page' => $page])
-            ->call('publish')
-            ->assertHasNoErrors();
-
-        $page->refresh();
-        $section->refresh();
         $this->assertSame('Draft About', $page->title);
         $this->assertSame('Draft headline', $section->payload['headline']);
         $this->assertSame(PublicationStatus::Published, $page->status);
         $this->assertSame(PublicationStatus::Published, $page->workflow_status);
         $this->assertNull($page->draft_snapshot);
+        $this->assertTrue(Page::query()->published()->whereKey($page)->exists());
         $this->assertNotNull($page->published_at);
     }
 
@@ -140,8 +112,8 @@ class PageDraftWorkflowTest extends TestCase
             ->assertHasErrors('pageForm');
 
         $page->refresh();
-        $this->assertSame('Live About', $page->title);
-        $this->assertSame('First draft', $page->draft_snapshot['page']['title']);
+        $this->assertSame('First draft', $page->title);
+        $this->assertNull($page->draft_snapshot);
         $this->assertSame(1, $page->draft_lock_version);
     }
 
@@ -151,15 +123,13 @@ class PageDraftWorkflowTest extends TestCase
         $publisher = $this->cmsUser(['manage pages', 'publish content'], 'Publisher');
         $publishAt = now()->addHour()->startOfMinute();
 
-        Livewire::actingAs($publisher)
-            ->test(PageEditor::class, ['page' => $page])
-            ->set('pageForm.title', 'Scheduled About')
-            ->set("sections.{$section->id}.payload.headline", 'Scheduled headline')
-            ->call('save')
-            ->call('submit')
-            ->set('publishAt', $publishAt->format('Y-m-d\TH:i'))
-            ->call('publish')
-            ->assertHasNoErrors();
+        $workflow = app(\App\Services\PageWorkflowService::class);
+        $snapshot = $workflow->snapshot($page);
+        $snapshot['page']['title'] = 'Scheduled About';
+        $snapshot['sections'][$section->id]['payload']['headline'] = 'Scheduled headline';
+        $page = $workflow->stage($page, $snapshot, 0, $publisher);
+        $page = $workflow->submit($page, $publisher);
+        $workflow->approve($page, $publisher, $publishAt);
 
         $page->refresh();
         $this->assertSame('Live About', $page->title);

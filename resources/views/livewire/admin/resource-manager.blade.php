@@ -28,34 +28,24 @@
             <form class="admin-panel-body admin-form-grid" wire:submit="save">
                 @foreach ($config['fields'] as $key => $field)
                     @continue($key === 'publish_at' && data_get($form, $config['status_field'] ?? '') !== 'scheduled')
-                    <div class="admin-field {{ $field['full'] ? 'full' : '' }}">
-                        @if ($field['type'] === 'checkbox')
-                            <label><input type="checkbox" wire:model="form.{{ $key }}"> {{ $field['label'] }}</label>
-                        @else
-                            <label for="field-{{ $key }}">{{ $field['label'] }}</label>
-                            @if ($field['type'] === 'textarea' || $field['type'] === 'json')
-                                <textarea id="field-{{ $key }}" wire:model="form.{{ $key }}"></textarea>
-                            @elseif ($field['type'] === 'select')
-                                <select
-                                    id="field-{{ $key }}"
-                                    @if ($key === ($config['status_field'] ?? null))
-                                        wire:model.live="form.{{ $key }}"
-                                    @else
-                                        wire:model="form.{{ $key }}"
-                                    @endif
-                                >
-                                    <option value="">Select...</option>
-                                    @foreach ($options[$field['options']] ?? [] as $value => $label)
-                                        <option value="{{ $value }}">{{ $label }}</option>
-                                    @endforeach
-                                </select>
-                            @else
-                                <input id="field-{{ $key }}" type="{{ $field['type'] }}" wire:model="form.{{ $key }}">
-                            @endif
-                        @endif
-                        @error('form.'.$key)<span class="admin-field-error">{{ $message }}</span>@enderror
-                    </div>
+                    @continue(in_array($key, ['slug', 'status', 'publication_status', 'publish_at', 'timezone', 'seo_title', 'seo_description', 'position_order'], true))
+                    @include('livewire.admin.partials.resource-field')
                 @endforeach
+                @php
+                    $advancedKeys = ['slug', 'status', 'publication_status', 'publish_at', 'timezone', 'seo_title', 'seo_description', 'position_order'];
+                    $advancedFields = collect($config['fields'])->only($advancedKeys);
+                @endphp
+                @if ($advancedFields->isNotEmpty())
+                    <details class="admin-field full resource-advanced">
+                        <summary>Advanced settings</summary>
+                        <div class="admin-form-grid">
+                            @foreach ($advancedFields as $key => $field)
+                                @continue($key === 'publish_at' && data_get($form, $config['status_field'] ?? '') !== 'scheduled')
+                                @include('livewire.admin.partials.resource-field')
+                            @endforeach
+                        </div>
+                    </details>
+                @endif
                 @error('form')<div class="admin-field full admin-field-error">{{ $message }}</div>@enderror
                 <div class="admin-actions">
                     <button class="admin-button" type="submit">Save record</button>

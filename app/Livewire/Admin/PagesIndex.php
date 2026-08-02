@@ -22,7 +22,7 @@ class PagesIndex extends Component
 
     public string $statusFilter = '';
 
-    public string $sortField = 'title';
+    public string $sortField = 'id';
 
     public string $sortDirection = 'asc';
 
@@ -239,7 +239,7 @@ class PagesIndex extends Component
         $search = trim($this->search);
         $sortField = in_array($this->sortField, $this->sortableFields(), true)
             ? $this->sortField
-            : 'title';
+            : 'id';
         $sortDirection = $this->sortDirection === 'desc' ? 'desc' : 'asc';
         $allowedTemplateKeys = $this->gate->allowedTemplateKeys(auth()->user());
 
@@ -276,7 +276,7 @@ class PagesIndex extends Component
 
     private function sortableFields(): array
     {
-        return ['title', 'template_key', 'sections_count', 'workflow_status', 'updated_at'];
+        return ['id', 'title', 'template_key', 'sections_count', 'workflow_status', 'updated_at'];
     }
 
     private function csvValue(?string $value): string

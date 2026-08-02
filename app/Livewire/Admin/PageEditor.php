@@ -3,29 +3,43 @@
 namespace App\Livewire\Admin;
 
 use App\Domain\Content\FieldGroupClassifier;
+use App\Domain\Content\PageEditorSchema;
 use App\Models\ContentRevision;
 use App\Models\MediaAsset;
 use App\Models\Page;
 use App\Models\PageSection;
 use App\Rules\SafeUrl;
 use App\Services\ContentPermissionGate;
+use App\Services\AdminMediaUploadService;
 use App\Services\PageWorkflowService;
 use App\Services\SiteChromeService;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('components.layouts.admin')]
 class PageEditor extends Component
 {
+    use WithFileUploads;
+
     public Page $page;
 
     public array $pageForm = [];
 
     public array $sections = [];
+
+    public array $mediaUploads = [];
+
+    public string $previewToken = '';
+
+    public bool $hasUnsavedChanges = false;
 
     #[Locked]
     public int $originalLockVersion;
@@ -36,17 +50,26 @@ class PageEditor extends Component
 
     protected FieldGroupClassifier $classifier;
 
-    public function boot(ContentPermissionGate $gate, FieldGroupClassifier $classifier): void
+    protected PageEditorSchema $editorSchema;
+
+    public function boot(
+        ContentPermissionGate $gate,
+        FieldGroupClassifier $classifier,
+        PageEditorSchema $editorSchema
+    ): void
     {
         $this->gate = $gate;
         $this->classifier = $classifier;
+        $this->editorSchema = $editorSchema;
     }
 
     public function mount(Page $page, PageWorkflowService $workflow): void
     {
         $this->page = $page->refresh()->load('sections');
         $this->authorizeAccess();
+        $this->previewToken = (string) Str::uuid();
         $this->loadEditorState($workflow);
+        $this->cachePreview();
     }
 
     private function loadEditorState(PageWorkflowService $workflow): void
@@ -58,13 +81,49 @@ class PageEditor extends Component
             : null;
         $this->pageForm = $snapshot['page'];
         $this->sections = $snapshot['sections'];
+        foreach ($this->page->sections as $section) {
+            foreach (($section->field_schema['fields'] ?? []) as $fieldId => $field) {
+                $value = $this->sections[$section->id]['payload'][$fieldId] ?? null;
+                if (! is_string($value)) {
+                    continue;
+                }
+                $value = preg_replace('/\s+/u', ' ', trim($value)) ?? trim($value);
+                if (($field['input'] ?? null) === 'url') {
+                    $path = '/'.ltrim($value, '/');
+                    $value = config('cms.legacy_redirects', [])[$path] ?? $value;
+                }
+                $this->sections[$section->id]['payload'][$fieldId] = $value;
+            }
+        }
     }
 
     public function save(SiteChromeService $chrome, PageWorkflowService $workflow): void
     {
         $this->authorizeAccess();
-        $this->stageSnapshot($this->validatedSnapshot(), $chrome, $workflow);
-        session()->flash('success', 'Draft changes were saved.');
+        $this->page = $workflow->publishDirect(
+            $this->page,
+            $this->validatedSnapshot(),
+            $this->originalLockVersion,
+            auth()->user()
+        );
+        $this->loadEditorState($workflow);
+        $this->hasUnsavedChanges = false;
+        $chrome->forget();
+        $this->cachePreview();
+        activity('cms')->causedBy(auth()->user())->performedOn($this->page)->log('published page changes');
+        session()->flash('success', 'Your changes are live.');
+        $this->dispatch('cms-page-saved');
+    }
+
+    public function updated(string $property): void
+    {
+        if (! str_starts_with($property, 'pageForm.') && ! str_starts_with($property, 'sections.')) {
+            return;
+        }
+
+        $this->hasUnsavedChanges = true;
+        $this->cachePreview();
+        $this->dispatch('cms-preview-refresh');
     }
 
     public function submit(SiteChromeService $chrome, PageWorkflowService $workflow): void
@@ -84,7 +143,7 @@ class PageEditor extends Component
     public function publish(SiteChromeService $chrome, PageWorkflowService $workflow): void
     {
         $this->authorizeAccess();
-        abort_unless(auth()->user()->can('publish content'), 403);
+        abort_unless($this->canEditPageSettings(), 403);
 
         if ($this->validatedSnapshot() != $this->normalizedDraftSnapshot()) {
             throw ValidationException::withMessages([
@@ -248,12 +307,11 @@ class PageEditor extends Component
             abort(422);
         }
 
-        $this->page = $workflow->stage(
+        $this->page = $workflow->publishDirect(
             $this->page,
             $snapshot,
             $this->originalLockVersion,
-            auth()->user(),
-            'draft_restored'
+            auth()->user()
         );
         activity('cms')
             ->causedBy(auth()->user())
@@ -263,7 +321,122 @@ class PageEditor extends Component
 
         $this->loadEditorState($workflow);
         $chrome->forget();
-        session()->flash('success', "Revision {$revision->version} was restored.");
+        $this->cachePreview();
+        session()->flash('success', "Revision {$revision->version} was restored and published.");
+    }
+
+    public function selectPageMedia(?int $assetId): void
+    {
+        $this->authorizeAccess();
+        abort_unless($this->canEditPageSettings(), 403);
+        $this->assertMediaAsset($assetId, ['image', 'icon']);
+        $this->pageForm['og_media_id'] = $assetId;
+        $this->refreshUnsavedPreview();
+    }
+
+    public function uploadPageMedia(): void
+    {
+        $this->authorizeAccess();
+        abort_unless($this->canEditPageSettings(), 403);
+
+        $asset = $this->storeUploadedMedia(
+            'page-og_media_id',
+            'image',
+            'Social image',
+            app(AdminMediaUploadService::class)
+        );
+        $this->pageForm['og_media_id'] = $asset->id;
+        unset($this->mediaUploads['page-og_media_id']);
+        $this->refreshUnsavedPreview();
+        session()->flash('success', 'Image uploaded and selected.');
+    }
+
+    public function selectSectionMedia(int $sectionId, string $fieldId, ?int $assetId): void
+    {
+        $this->authorizeAccess();
+        $field = $this->sectionField($sectionId, $fieldId);
+        abort_unless($field && $this->canEditField($sectionId, $fieldId, $field), 403);
+        $this->assertMediaAsset($assetId, [($field['input'] ?? '') === 'icon' ? 'icon' : 'image']);
+        $this->sections[$sectionId]['payload'][$fieldId] = $assetId;
+        $this->refreshUnsavedPreview();
+    }
+
+    public function uploadSectionMedia(int $sectionId, string $fieldId): void
+    {
+        $this->authorizeAccess();
+        $field = $this->sectionField($sectionId, $fieldId);
+        abort_unless($field && $this->canEditField($sectionId, $fieldId, $field), 403);
+
+        $kind = ($field['input'] ?? '') === 'icon' ? 'icon' : 'image';
+        $asset = $this->storeUploadedMedia(
+            $this->sectionUploadKey($sectionId, $fieldId),
+            $kind,
+            $field['editor_label'] ?? $field['label'] ?? 'Page image',
+            app(AdminMediaUploadService::class)
+        );
+        $this->sections[$sectionId]['payload'][$fieldId] = $asset->id;
+        unset($this->mediaUploads[$this->sectionUploadKey($sectionId, $fieldId)]);
+        $this->refreshUnsavedPreview();
+        session()->flash('success', 'Media uploaded and selected.');
+    }
+
+    private function assertMediaAsset(?int $assetId, array $allowedKinds): void
+    {
+        if (! $assetId) {
+            return;
+        }
+
+        abort_unless(
+            MediaAsset::query()->whereKey($assetId)->whereIn('kind', $allowedKinds)->exists(),
+            422,
+            'Select a valid media asset.'
+        );
+    }
+
+    private function sectionField(int $sectionId, string $fieldId): ?array
+    {
+        $section = $this->page->sections->firstWhere('id', $sectionId);
+
+        return $section->field_schema['fields'][$fieldId] ?? null;
+    }
+
+    public function sectionUploadKey(int $sectionId, string $fieldId): string
+    {
+        return "section-{$sectionId}-{$fieldId}";
+    }
+
+    public function acceptedMediaTypes(string $input): string
+    {
+        return $input === 'icon'
+            ? '.jpg,.jpeg,.png,.webp,.gif,.svg'
+            : '.jpg,.jpeg,.png,.webp,.gif';
+    }
+
+    private function storeUploadedMedia(
+        string $uploadKey,
+        string $kind,
+        string $label,
+        AdminMediaUploadService $uploader
+    ): MediaAsset
+    {
+        $upload = $this->mediaUploads[$uploadKey] ?? null;
+        $validator = Validator::make(
+            ['upload' => $upload],
+            ['upload' => ['required', 'file', 'max:'.config('cms.max_upload_kilobytes')]]
+        );
+        if ($validator->fails()) {
+            throw ValidationException::withMessages([
+                "mediaUploads.{$uploadKey}" => $validator->errors()->first('upload'),
+            ]);
+        }
+
+        try {
+            return $uploader->store($upload, $kind, $label);
+        } catch (ValidationException $exception) {
+            throw ValidationException::withMessages([
+                "mediaUploads.{$uploadKey}" => $exception->errors()['upload'][0] ?? 'The image could not be uploaded.',
+            ]);
+        }
     }
 
     public function render()
@@ -291,8 +464,12 @@ class PageEditor extends Component
         $sectionLabels = $this->page->sections->pluck('label', 'id');
 
         return view('livewire.admin.page-editor', [
-            'media' => MediaAsset::query()->orderBy('title')->get(),
-            'previewUrl' => URL::temporarySignedRoute('admin.pages.preview', now()->addMinutes(30), $this->page),
+            'media' => MediaAsset::query()->with('media')->orderBy('title')->get(),
+            'previewUrl' => URL::temporarySignedRoute(
+                'admin.pages.preview',
+                now()->addMinutes(30),
+                ['page' => $this->page, 'editor' => $this->previewToken]
+            ),
             'revisions' => $revisions,
             'sectionLabels' => $sectionLabels,
         ])->title('Edit '.$this->page->title)->layoutData(['heading' => 'Edit '.$this->page->title]);
@@ -333,5 +510,58 @@ class PageEditor extends Component
     public function canEditPageSettings(): bool
     {
         return $this->gate->isUnrestricted(auth()->user());
+    }
+
+    public function editableFieldsFor(int $sectionId): \Illuminate\Support\Collection
+    {
+        $section = $this->page->sections->firstWhere('id', $sectionId);
+        if (! $section) {
+            return collect();
+        }
+
+        return collect($this->editorSchema->fields($this->page->template_key, $section))
+            ->filter(fn (array $field, string $fieldId): bool => $this->canEditField(
+                $section->id,
+                $fieldId,
+                $field
+            ));
+    }
+
+    public function manageUrl(string $sectionKey): ?string
+    {
+        $resource = match (true) {
+            in_array($sectionKey, ['news'], true) => 'posts',
+            in_array($sectionKey, ['players', 'coaches', 'leadership'], true) => 'people',
+            str_contains($sectionKey, 'schedule'), $sectionKey === 'next_game' => 'games',
+            str_contains($sectionKey, 'partner') => 'sponsors',
+            str_contains($sectionKey, 'standing') => 'standings',
+            default => null,
+        };
+
+        if (! $resource || ! array_key_exists($resource, app(\App\Domain\Admin\ResourceRegistry::class)->all())) {
+            return null;
+        }
+
+        return route('admin.resources', $resource);
+    }
+
+    private function cachePreview(): void
+    {
+        if ($this->previewToken === '') {
+            return;
+        }
+
+        Cache::put(
+            "cms-page-preview:".auth()->id().":{$this->page->id}:{$this->previewToken}",
+            ['page' => $this->pageForm, 'sections' => $this->sections],
+            now()->addMinutes(30)
+        );
+    }
+
+    private function refreshUnsavedPreview(): void
+    {
+        $this->hasUnsavedChanges = true;
+        $this->cachePreview();
+        $this->dispatch('cms-preview-refresh');
     }
 }

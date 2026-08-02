@@ -4,6 +4,8 @@ import { initializeFooter } from "./site/footer.js";
 import { initializeSchedule } from "./site/schedule.js";
 import { initializeAnimations } from "./site/animations.js";
 import { initializeAdminActions } from "./admin-actions.js";
+import { initializeAdminEditor } from "./admin-editor.js";
+import { initializeAdminMediaPicker } from "./admin-media-picker.js";
 import { initializeAdminAuth } from "./admin-auth.js";
 import { initializeAdminNavigation } from "./admin-navigation.js";
 import { initializeConfirmDialog } from "./confirm-dialog.js";
@@ -25,6 +27,8 @@ function initializeSite() {
     initializeAnimations();
     initializeConfirmDialog();
     initializeAdminActions();
+    initializeAdminEditor();
+    initializeAdminMediaPicker();
     initializeAdminAuth();
     initializeAdminNavigation();
     initializeTurnstile();

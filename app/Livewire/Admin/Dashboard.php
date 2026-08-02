@@ -26,15 +26,10 @@ class Dashboard extends Component
     {
         $this->authorizeAccess();
         $user = auth()->user();
-        $pending = collect([
-            $user->can('manage pages') ? Page::query()->where('workflow_status', 'in_review')->count() : 0,
-            $user->can('manage roster') ? Person::query()->where('workflow_status', 'in_review')->count() : 0,
-            $user->can('manage news') ? Post::query()->where('workflow_status', 'in_review')->count() : 0,
-            $user->can('manage schedule') ? Game::query()->where('workflow_status', 'in_review')->count() : 0,
-            $user->can('manage sponsors') ? Sponsor::query()->where('workflow_status', 'in_review')->count() : 0,
-        ])->sum();
-
-        $stats = ['Pending review' => $pending];
+        $stats = [];
+        if ($user->can('manage pages')) {
+            $stats['Website pages'] = Page::query()->count();
+        }
         if ($user->can('manage schedule')) {
             $stats['Upcoming games'] = Game::query()->upcoming()->count();
         }
@@ -55,7 +50,30 @@ class Dashboard extends Component
             ? FormSubmission::query()->latest()->limit(5)->get()
             : collect();
 
-        return view('livewire.admin.dashboard', compact('stats', 'upcomingGames', 'recentSubmissions'))
+        $recentContent = collect();
+        if ($user->can('manage pages')) {
+            $recentContent = $recentContent->concat(
+                Page::query()->latest('updated_at')->limit(5)->get()->map(fn (Page $page) => [
+                    'title' => $page->title,
+                    'type' => 'Website page',
+                    'updated_at' => $page->updated_at,
+                    'url' => route('admin.pages.edit', $page),
+                ])
+            );
+        }
+        if ($user->can('manage news')) {
+            $recentContent = $recentContent->concat(
+                Post::query()->latest('updated_at')->limit(5)->get()->map(fn (Post $post) => [
+                    'title' => $post->title,
+                    'type' => 'News',
+                    'updated_at' => $post->updated_at,
+                    'url' => route('admin.resources', 'posts'),
+                ])
+            );
+        }
+        $recentContent = $recentContent->sortByDesc('updated_at')->take(6)->values();
+
+        return view('livewire.admin.dashboard', compact('stats', 'upcomingGames', 'recentSubmissions', 'recentContent'))
             ->title('Dashboard')
             ->layoutData(['heading' => 'Dashboard']);
     }
