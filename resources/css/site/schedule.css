@@ -1,0 +1,1301 @@
+body[data-page="schedule"] #site-main {
+  overflow: hidden;
+}
+
+.schedule-page {
+  padding-bottom: 28px;
+}
+
+.schedule-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    linear-gradient(90deg, #030304 0%, #0a0a0b 44%, rgba(10,10,11,.28) 72%),
+    #080809;
+}
+
+.schedule-hero::after {
+  position: absolute;
+  right: -2%;
+  bottom: -90px;
+  width: 63%;
+  height: 260px;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(-14deg, transparent 0 15px, rgba(227,11,19,.15) 16px 18px),
+    linear-gradient(165deg, transparent 17%, rgba(227,11,19,.86) 18%, transparent 29%);
+  content: "";
+  transform: rotate(-3deg);
+}
+
+.schedule-hero-grid {
+  min-height: 440px;
+  display: grid;
+  grid-template-columns: .78fr 1.22fr;
+  align-items: stretch;
+}
+
+.schedule-hero-copy {
+  position: relative;
+  z-index: 2;
+  padding: 80px 20px 74px 12px;
+  align-self: center;
+}
+
+.schedule-hero-copy > p {
+  margin-bottom: 16px;
+  color: var(--red);
+  font-family: var(--display);
+  font-size: var(--font-small);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.schedule-hero-copy h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(70px, 8vw, 104px);
+  font-weight: 900;
+  line-height: .82;
+  text-transform: uppercase;
+}
+
+.schedule-hero-copy h1 span {
+  color: var(--red);
+}
+
+.schedule-hero-media {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 440px;
+  margin-right: calc((100vw - min(1180px, calc(100vw - 48px))) / -2);
+  border-radius: 0;
+  object-fit: cover;
+  background:
+    linear-gradient(90deg, #0a0a0b 0%, transparent 19%),
+    linear-gradient(135deg, transparent 49.5%, rgba(255,255,255,.12) 49.5%, rgba(255,255,255,.12) 50.5%, transparent 50.5%),
+    linear-gradient(145deg, #1b1b1e, #55555a 60%, #8f1015);
+}
+
+.schedule-stat-bar {
+  position: relative;
+  z-index: 4;
+  min-height: 116px;
+  margin-top: -30px;
+  padding: 18px 28px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.schedule-stat-bar > div {
+  min-height: 65px;
+  padding: 0 22px;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  grid-template-rows: auto auto;
+  align-content: center;
+  column-gap: 13px;
+  border-right: 1px solid #d6d6d6;
+}
+
+.schedule-stat-bar > div:last-child {
+  border-right: 0;
+}
+
+.schedule-stat-bar img {
+  width: 45px;
+  height: 45px;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+
+.schedule-stat-bar strong {
+  color: var(--red);
+  font-family: var(--display);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.schedule-stat-bar span {
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.next-calendar-grid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1.06fr;
+  gap: 18px;
+}
+
+.schedule-next-game {
+  min-height: 420px;
+  padding: 20px 24px 16px;
+  border-radius: 6px;
+  color: #fff;
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.018) 0 1px, transparent 1px 8px),
+    #0b0b0c;
+  box-shadow: var(--shadow);
+}
+
+.schedule-next-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+}
+
+.schedule-next-heading span {
+  width: 42px;
+  height: 1px;
+  background: #57575b;
+}
+
+.schedule-next-heading b {
+  color: var(--red);
+}
+
+.schedule-next-heading h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.schedule-matchup {
+  margin: 12px 0;
+  display: grid;
+  grid-template-columns: 1fr 52px 1fr;
+  align-items: center;
+}
+
+.schedule-matchup > div {
+  text-align: center;
+}
+
+.schedule-matchup img {
+  width: 88px;
+  height: 88px;
+  margin: auto;
+  object-fit: contain;
+}
+
+.schedule-matchup > strong {
+  font-family: var(--display);
+  font-size: 32px;
+  text-align: center;
+}
+
+.schedule-matchup h3 {
+  margin: 3px 0 0;
+  font-family: var(--display);
+  font-size: 17px;
+  line-height: .9;
+  text-transform: uppercase;
+}
+
+.schedule-matchup h3 small {
+  margin-top: 5px;
+  display: block;
+  color: #aaa;
+  font-size: var(--font-caption);
+}
+
+.schedule-game-meta {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  align-items: end;
+  gap: 18px;
+}
+
+.schedule-game-meta dl {
+  margin: 0;
+}
+
+.schedule-game-meta dl > div {
+  padding: 6px 0;
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  border-bottom: 1px solid #28282a;
+  font-size: var(--font-caption);
+}
+
+.schedule-game-meta dt {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #b7b7ba;
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.schedule-game-meta dt img {
+  width: 14px;
+  height: 14px;
+}
+
+.schedule-game-meta dd {
+  margin: 0;
+}
+
+.schedule-countdown {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.schedule-countdown > div {
+  min-width: 0;
+  padding: 8px 3px;
+  border: 1px solid #5c5c61;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.schedule-countdown strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 25px;
+  line-height: 1;
+}
+
+.schedule-countdown span {
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.schedule-ticket {
+  width: 100%;
+  min-height: 39px;
+  margin-top: 14px;
+}
+
+.schedule-calendar {
+  min-width: 0;
+  padding: 22px 24px 16px;
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.schedule-calendar-heading {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.schedule-calendar-heading h2,
+.schedule-panel-heading h2,
+.standings-panel h2,
+.download-panel h2,
+.home-venue > h2,
+.season-stats > h2,
+.schedule-partners > h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 23px;
+  text-transform: uppercase;
+}
+
+.schedule-calendar-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.schedule-calendar-heading strong {
+  min-width: 105px;
+  font-family: var(--display);
+  font-size: var(--font-small);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.calendar-nav {
+  width: 32px;
+  height: 32px;
+  padding: 7px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.calendar-nav img {
+  width: 100%;
+  height: 100%;
+}
+
+.calendar-prev img {
+  transform: rotate(180deg);
+}
+
+.calendar-weekdays,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-weekdays {
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.calendar-weekdays span {
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.calendar-day {
+  position: relative;
+  min-height: 41px;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid #f2f2f2;
+  border-bottom: 1px solid #f2f2f2;
+  font-size: var(--font-caption);
+}
+
+.calendar-day.muted {
+  color: #b6b6b8;
+}
+
+.calendar-day.selected {
+  margin: 3px;
+  min-height: 35px;
+  border: 0;
+  border-radius: 4px;
+  color: #fff;
+  background: var(--red);
+  box-shadow: 0 3px 9px rgba(227,11,19,.28);
+}
+
+.calendar-day i {
+  position: absolute;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #111;
+}
+
+.calendar-day i.home {
+  background: var(--red);
+}
+
+.calendar-day i.event {
+  background: #aaa;
+}
+
+.calendar-legend {
+  padding-top: 13px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.calendar-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.calendar-legend i {
+  width: 8px;
+  height: 8px;
+  display: block;
+  border-radius: 50%;
+}
+
+.home-dot {
+  background: var(--red);
+}
+
+.away-dot {
+  background: #111;
+}
+
+.event-dot {
+  background: #aaa;
+}
+
+.season-layout {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 2.25fr) minmax(260px, .95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.season-schedule,
+.standings-panel,
+.download-panel,
+.home-venue,
+.season-stats,
+.schedule-partners {
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+
+.season-schedule {
+  min-width: 0;
+  padding: 17px 16px 15px;
+}
+
+.schedule-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.schedule-panel-heading h2::after {
+  width: 40px;
+  height: 3px;
+  margin-top: 7px;
+  display: block;
+  background: var(--red);
+  content: "";
+}
+
+.schedule-panel-heading select {
+  min-width: 160px;
+  height: 35px;
+  padding: 0 12px;
+  border: 1px solid #cfcfd1;
+  border-radius: 4px;
+  background: #fff;
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.schedule-filters {
+  margin: 15px 0 13px;
+  display: flex;
+  gap: 10px;
+}
+
+.schedule-filters button {
+  min-width: 115px;
+  height: 35px;
+  padding: 0 16px;
+  border: 1px solid #d0d0d2;
+  border-radius: 4px;
+  background: #fff;
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.schedule-filters button.active {
+  color: #fff;
+  border-color: var(--red);
+  background: var(--red);
+}
+
+.season-table-wrap {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+}
+
+.season-table-wrap:focus-visible {
+  outline: 3px solid rgba(227, 11, 19, .3);
+  outline-offset: 3px;
+}
+
+.season-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-caption);
+  white-space: nowrap;
+}
+
+.season-table th {
+  padding: 10px 9px;
+  color: #fff;
+  background: var(--red);
+  font-family: var(--display);
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.season-table td {
+  padding: 9px;
+  border-bottom: 1px solid #e4e4e4;
+}
+
+.season-table tbody tr[hidden] {
+  display: none;
+}
+
+.season-table .featured-game {
+  color: var(--red);
+  background: #fff0f1;
+}
+
+.team-badge {
+  width: 26px;
+  height: 26px;
+  margin-right: 8px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid #9b9b9d;
+  border-radius: 50%;
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  vertical-align: middle;
+}
+
+.win {
+  color: #0a7a27;
+  font-weight: 700;
+}
+
+.loss,
+.upcoming {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.season-table td:last-child button,
+.season-table td:last-child a,
+.season-table td:last-child .game-complete {
+  min-width: 72px;
+  padding: 5px 10px;
+  display: inline-flex;
+  justify-content: center;
+  border: 1px solid #c4c4c6;
+  border-radius: 3px;
+  color: #111;
+  background: #fff;
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.season-table td:last-child .game-complete {
+  color: #666;
+  border-color: transparent;
+  background: #f2f2f3;
+}
+
+.season-table .featured-game td:last-child a,
+.season-table tr:has(.upcoming) td:last-child a {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+.season-table .featured-game td:last-child a {
+  color: #fff;
+  background: var(--red);
+}
+
+.schedule-reset {
+  min-width: 220px;
+  min-height: 36px;
+  margin: 14px auto 0;
+  display: flex;
+}
+
+.schedule-sidebar {
+  display: grid;
+  gap: 18px;
+}
+
+.standings-panel {
+  overflow: hidden;
+}
+
+.standings-panel > div:first-child {
+  padding: 17px 17px 11px;
+}
+
+.standings-panel > div:first-child p {
+  margin: 2px 0 0;
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.standings-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-caption);
+  white-space: nowrap;
+}
+
+.standings-panel th,
+.standings-panel td {
+  padding: 8px 7px;
+  border-bottom: 1px solid #e4e4e4;
+  text-align: left;
+}
+
+.standings-panel th {
+  background: #f2f2f3;
+  font-family: var(--display);
+  text-transform: uppercase;
+}
+
+.standings-current {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.standings-link > a {
+  padding: 13px 17px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  color: var(--red);
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.standings-link > a img {
+  width: 14px;
+  height: 14px;
+}
+
+.download-panel {
+  padding: 17px;
+}
+
+.download-panel p {
+  margin: 5px 0 13px;
+  font-size: var(--font-caption);
+}
+
+.download-panel .button {
+  width: 100%;
+  min-height: 36px;
+}
+
+.download-status {
+  min-height: 18px;
+  color: #0a7a27;
+}
+
+.venue-game-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: .78fr 1.22fr;
+  gap: 18px;
+}
+
+.home-venue {
+  overflow: hidden;
+}
+
+.home-venue > h2 {
+  padding: 16px 16px 10px;
+}
+
+.venue-image {
+  display: block;
+  width: calc(100% - 28px);
+  height: 155px;
+  margin: 0 14px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.venue-address {
+  padding: 12px 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.venue-address > img {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+.venue-address strong,
+.venue-address span {
+  display: block;
+}
+
+.venue-address strong {
+  font-size: var(--font-caption);
+}
+
+.venue-address span {
+  color: #666;
+  font-size: var(--font-caption);
+}
+
+.venue-facts {
+  padding: 12px 14px 14px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.venue-facts > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.venue-facts img {
+  width: 22px;
+  height: 22px;
+}
+
+.venue-facts span,
+.venue-facts strong {
+  display: block;
+  font-size: var(--font-caption);
+}
+
+.venue-facts span {
+  color: var(--red);
+}
+
+.venue-facts strong {
+  color: #111;
+}
+
+.game-day-cta {
+  position: relative;
+  min-height: 290px;
+  overflow: hidden;
+  border-radius: 6px;
+  color: #fff;
+  background: #5b0609;
+}
+
+.game-day-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  object-fit: cover;
+  background:
+    linear-gradient(90deg, rgba(93,0,4,.97), rgba(119,5,10,.76) 52%, rgba(10,10,11,.28)),
+    linear-gradient(135deg, transparent 49.5%, rgba(255,255,255,.17) 49.5%, rgba(255,255,255,.17) 50.5%, transparent 50.5%),
+    linear-gradient(145deg, #541015, #131316);
+}
+
+.game-day-copy {
+  position: relative;
+  z-index: 2;
+  width: 62%;
+  padding: 62px 34px;
+}
+
+.game-day-copy h2 {
+  margin-bottom: 8px;
+  font-family: var(--display);
+  font-size: 39px;
+  line-height: .95;
+  text-transform: uppercase;
+}
+
+.game-day-copy p {
+  margin-bottom: 22px;
+  font-size: var(--font-small);
+}
+
+.game-day-copy .button {
+  min-width: 210px;
+}
+
+.season-stats {
+  margin-top: 18px;
+  padding: 16px;
+}
+
+.season-stats > h2 {
+  margin-bottom: 15px;
+}
+
+.season-stats > div {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.season-stats article {
+  min-height: 72px;
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: 43px 1fr;
+  grid-template-rows: auto auto;
+  align-content: center;
+  column-gap: 10px;
+  border-right: 1px solid #d8d8da;
+}
+
+.season-stats article:last-child {
+  border-right: 0;
+}
+
+.season-stats article img {
+  width: 38px;
+  height: 38px;
+  grid-row: 1 / 3;
+}
+
+.season-stats article strong {
+  color: var(--red);
+  font-family: var(--display);
+  font-size: 27px;
+  line-height: 1;
+}
+
+.season-stats article span {
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.schedule-partners {
+  margin-top: 18px;
+  padding: 17px;
+  text-align: center;
+}
+
+.schedule-partners > h2 {
+  margin-bottom: 15px;
+}
+
+.schedule-partners > div {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 14px;
+}
+
+.schedule-partners > div > div {
+  height: 68px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d8d8da;
+  border-radius: 5px;
+  color: #888;
+  background:
+    linear-gradient(135deg, transparent 49.5%, #efefef 49.5%, #efefef 50.5%, transparent 50.5%),
+    #fff;
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.schedule-sponsor-cta {
+  min-height: 150px;
+  margin-top: 18px;
+  padding: 27px 40px;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  align-items: center;
+  gap: 40px;
+  border-radius: 6px;
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(116,0,4,.98), rgba(231,15,22,.94)),
+    repeating-linear-gradient(135deg, transparent 0 10px, rgba(255,255,255,.06) 10px 11px);
+}
+
+.schedule-sponsor-cta h2 {
+  margin-bottom: 7px;
+  font-family: var(--display);
+  font-size: 31px;
+  line-height: .96;
+  text-transform: uppercase;
+}
+
+.schedule-sponsor-cta p {
+  max-width: 460px;
+  margin: 0;
+  font-size: var(--font-small);
+}
+
+.schedule-sponsor-cta > div:last-child {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+}
+
+.schedule-sponsor-cta .button {
+  min-width: 185px;
+}
+
+@media (min-width: 861px) and (max-width: 1000px) {
+  .schedule-hero-grid {
+    min-height: 330px;
+  }
+
+  .schedule-hero-copy {
+    padding: 50px 18px 55px 0;
+  }
+
+  .schedule-hero-copy h1 {
+    font-size: 65px;
+  }
+
+  .schedule-hero-media {
+    min-height: 330px;
+  }
+
+  .schedule-stat-bar {
+    min-height: 90px;
+    padding: 12px 15px;
+  }
+
+  .schedule-stat-bar > div {
+    padding-inline: 10px;
+    grid-template-columns: 36px 1fr;
+    column-gap: 9px;
+  }
+
+  .schedule-stat-bar img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .schedule-stat-bar strong {
+    font-size: 25px;
+  }
+
+  .schedule-next-game {
+    min-height: 325px;
+    padding: 12px 15px 11px;
+  }
+
+  .schedule-matchup {
+    margin: 5px 0;
+  }
+
+  .schedule-matchup img {
+    width: 62px;
+    height: 62px;
+  }
+
+  .schedule-game-meta {
+    gap: 10px;
+  }
+
+  .schedule-game-meta dl > div {
+    padding: 3px 0;
+    grid-template-columns: 68px 1fr;
+  }
+
+  .schedule-countdown strong {
+    font-size: 19px;
+  }
+
+  .schedule-ticket {
+    margin-top: 8px;
+  }
+
+  .schedule-calendar {
+    padding: 15px;
+  }
+
+  .calendar-day {
+    min-height: 33px;
+  }
+
+  .calendar-day.selected {
+    min-height: 27px;
+  }
+
+  .season-layout {
+    grid-template-columns: minmax(0, 2.35fr) minmax(225px, .9fr);
+    gap: 12px;
+  }
+
+  .season-schedule {
+    padding-inline: 11px;
+  }
+
+  .schedule-filters button {
+    min-width: 95px;
+    padding-inline: 10px;
+  }
+
+  .season-table th,
+  .season-table td {
+    padding: 7px 5px;
+  }
+
+  .standings-panel th,
+  .standings-panel td {
+    padding: 6px 4px;
+  }
+
+  .team-badge {
+    width: 22px;
+    height: 22px;
+    margin-right: 4px;
+  }
+
+  .venue-image {
+    height: 120px;
+  }
+
+  .venue-facts {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .game-day-cta {
+    min-height: 245px;
+  }
+
+  .game-day-copy {
+    padding: 45px 26px;
+  }
+
+  .season-stats article {
+    padding-inline: 10px;
+    grid-template-columns: 35px 1fr;
+  }
+
+  .season-stats article img {
+    width: 31px;
+    height: 31px;
+  }
+
+  .schedule-partners > div {
+    gap: 9px;
+  }
+
+  .schedule-partners > div > div {
+    height: 53px;
+  }
+
+  .schedule-sponsor-cta {
+    min-height: 125px;
+    padding: 21px 30px;
+  }
+}
+
+@media (max-width: 860px) {
+  .schedule-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-hero-copy {
+    padding: 46px 0 30px;
+  }
+
+  .schedule-hero-media {
+    min-height: 300px;
+    margin: 0;
+  }
+
+  .schedule-stat-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .schedule-stat-bar > div {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .schedule-stat-bar > div:nth-child(3) {
+    border-right: 0;
+  }
+
+  .schedule-stat-bar > div:nth-child(n+4) {
+    border-bottom: 0;
+  }
+
+  .next-calendar-grid,
+  .season-layout,
+  .venue-game-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .season-layout {
+    gap: 18px;
+  }
+
+  .schedule-sidebar {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .download-panel {
+    align-self: start;
+  }
+
+  .season-stats > div {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 14px;
+  }
+
+  .season-stats article:nth-child(3) {
+    border-right: 0;
+  }
+
+  .schedule-partners > div {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .schedule-sponsor-cta {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+
+@media (max-width: 680px) {
+  .schedule-hero-copy h1 {
+    font-size: 58px;
+  }
+
+  .schedule-hero-media {
+    min-height: 240px;
+  }
+
+  .schedule-stat-bar {
+    padding-inline: 10px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .schedule-stat-bar > div,
+  .schedule-stat-bar > div:nth-child(3) {
+    padding: 14px 8px;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .schedule-stat-bar > div:nth-child(even) {
+    border-right: 0;
+  }
+
+  .schedule-stat-bar > div:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  .schedule-next-game {
+    min-height: 0;
+  }
+
+  .schedule-game-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-calendar-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .calendar-day {
+    min-height: 37px;
+  }
+
+  .calendar-legend {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .schedule-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .schedule-panel-heading select {
+    width: 100%;
+  }
+
+  .schedule-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-filters button {
+    width: 100%;
+  }
+
+  .schedule-sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .venue-facts {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .game-day-copy {
+    width: 100%;
+    padding: 45px 23px;
+  }
+
+  .game-day-copy h2 {
+    font-size: 33px;
+  }
+
+  .season-stats > div {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .season-stats article:nth-child(3) {
+    border-right: 1px solid #d8d8da;
+  }
+
+  .season-stats article:nth-child(even) {
+    border-right: 0;
+  }
+
+  .schedule-partners > div {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .schedule-sponsor-cta {
+    padding: 25px 20px;
+  }
+
+  .schedule-sponsor-cta > div:last-child {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .schedule-sponsor-cta .button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,210 @@
+.partner-carousel {
+  --partner-columns: 5;
+  --partner-gap: 14px;
+  --partner-scroll-speed: 30;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+  margin: 15px 0;
+}
+
+.schedule-partners > .partner-carousel {
+  display: block;
+  grid-template-columns: none;
+  gap: 0;
+}
+
+.partner-logos.partner-carousel div,
+.schedule-partners > .partner-carousel > div {
+  height: auto;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  font: inherit;
+  line-height: inherit;
+  text-transform: none;
+}
+
+.partner-carousel .partner-carousel-shell {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 10px;
+}
+
+.partner-carousel .partner-carousel-viewport {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: inline proximity;
+  scrollbar-width: none;
+}
+
+.partner-carousel .partner-carousel-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.partner-carousel.is-auto-scrolling .partner-carousel-viewport {
+  scroll-behavior: auto;
+  scroll-snap-type: none;
+}
+
+.partner-carousel .partner-carousel-track {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  gap: var(--partner-gap);
+}
+
+.partner-carousel .partner-carousel-slide {
+  flex: 0 0 calc((100% - (4 * var(--partner-gap))) / 5);
+  min-width: 0;
+  height: 86px;
+  padding: 10px 12px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border: 1px solid #d7d7d7;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.partner-carousel .partner-carousel-slide a {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.partner-carousel .partner-carousel-slide img {
+  width: min(100%, 150px);
+  height: 58px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.partner-carousel .partner-carousel-slide strong {
+  max-width: 100%;
+  font-family: var(--display);
+  font-size: var(--font-small);
+  line-height: 1.1;
+  text-align: center;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.partner-carousel-button {
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #cfd0d2;
+  border-radius: 4px;
+  color: var(--red);
+  background: #fff;
+  cursor: pointer;
+}
+
+.partner-carousel-button img {
+  width: 22px;
+  height: 22px;
+}
+
+.partner-carousel-button.previous img {
+  transform: rotate(180deg);
+}
+
+.partner-carousel-button:hover:not(:disabled) {
+  border-color: var(--red);
+  background: #fff5f5;
+}
+
+.partner-carousel-button:focus-visible,
+.partner-carousel-viewport:focus-visible {
+  outline: 3px solid rgba(227, 11, 19, .22);
+  outline-offset: 2px;
+}
+
+.partner-carousel-button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.partner-carousel.is-static .partner-carousel-shell {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.partner-carousel.is-static .partner-carousel-button {
+  display: none;
+}
+
+.partner-carousel-empty {
+  margin: 14px 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 920px) {
+  .partner-carousel {
+    --partner-columns: 4;
+  }
+
+  .partner-carousel .partner-carousel-slide {
+    flex-basis: calc((100% - (3 * var(--partner-gap))) / 4);
+  }
+}
+
+@media (max-width: 680px) {
+  .partner-carousel {
+    --partner-columns: 3;
+    --partner-gap: 10px;
+  }
+
+  .partner-carousel .partner-carousel-shell {
+    grid-template-columns: 36px minmax(0, 1fr) 36px;
+    gap: 7px;
+  }
+
+  .partner-carousel .partner-carousel-slide {
+    flex-basis: calc((100% - (2 * var(--partner-gap))) / 3);
+    height: 76px;
+    padding: 8px;
+  }
+
+  .partner-carousel .partner-carousel-slide img {
+    height: 50px;
+  }
+
+  .partner-carousel-button {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 460px) {
+  .partner-carousel {
+    --partner-columns: 2;
+  }
+
+  .partner-carousel .partner-carousel-slide {
+    flex-basis: calc((100% - var(--partner-gap)) / 2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-carousel .partner-carousel-viewport {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,803 @@
+body[data-page="roster"] #site-main {
+  overflow: hidden;
+}
+
+.roster-page {
+  padding-bottom: 28px;
+}
+
+.roster-hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background:
+    linear-gradient(90deg, #050506 0%, #0b0b0c 48%, rgba(11,11,12,.35) 70%),
+    #0b0b0c;
+}
+
+.roster-hero::after {
+  position: absolute;
+  right: -2%;
+  bottom: -80px;
+  width: 63%;
+  height: 270px;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(-14deg, transparent 0 15px, rgba(227,11,19,.14) 16px 18px),
+    linear-gradient(165deg, transparent 17%, rgba(227,11,19,.8) 18%, transparent 28%);
+  content: "";
+  transform: rotate(-3deg);
+}
+
+.roster-hero-grid {
+  min-height: 500px;
+  display: grid;
+  grid-template-columns: .72fr 1.28fr;
+  align-items: stretch;
+}
+
+.roster-hero-copy {
+  position: relative;
+  z-index: 2;
+  padding: 78px 18px 82px 12px;
+  align-self: center;
+}
+
+.roster-eyebrow {
+  margin: 0 0 14px;
+  color: var(--red);
+  font-family: var(--display);
+  font-size: var(--font-small);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.roster-eyebrow::after {
+  width: 42px;
+  height: 3px;
+  margin-top: 8px;
+  display: block;
+  background: var(--red);
+  content: "";
+}
+
+.roster-hero h1 {
+  margin-bottom: 18px;
+  font-family: var(--display);
+  font-size: clamp(64px, 7vw, 92px);
+  font-weight: 900;
+  line-height: .82;
+  text-transform: uppercase;
+}
+
+.roster-hero h1 strong {
+  margin-top: 16px;
+  display: block;
+  color: var(--red);
+}
+
+.roster-hero-copy > p:not(.roster-eyebrow) {
+  max-width: 430px;
+  margin-bottom: 24px;
+  color: #e1e1e1;
+  font-size: var(--font-small);
+}
+
+.roster-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.roster-hero-actions .button {
+  min-width: 175px;
+}
+
+.roster-button-light {
+  color: #fff;
+  border-color: #fff;
+  background: rgba(255,255,255,.03);
+}
+
+.roster-button-light img {
+  filter: grayscale(1) brightness(0) invert(1);
+}
+
+.roster-hero-media {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  margin-right: calc((100vw - min(1180px, calc(100vw - 48px))) / -2);
+  border-radius: 0;
+  object-fit: cover;
+  background:
+    linear-gradient(90deg, #0b0b0c 0%, transparent 19%),
+    linear-gradient(135deg, transparent 49.5%, rgba(255,255,255,.12) 49.5%, rgba(255,255,255,.12) 50.5%, transparent 50.5%),
+    linear-gradient(145deg, #19191b, #55555b 62%, #871017);
+}
+
+.roster-stat-bar {
+  position: relative;
+  z-index: 4;
+  min-height: 116px;
+  margin-top: -30px;
+  padding: 18px 28px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.roster-stat-bar > div {
+  min-height: 65px;
+  padding: 0 22px;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  grid-template-rows: auto auto;
+  align-content: center;
+  column-gap: 13px;
+  border-right: 1px solid #d6d6d6;
+}
+
+.roster-stat-bar > div:last-child {
+  border-right: 0;
+}
+
+.roster-stat-bar img {
+  width: 45px;
+  height: 45px;
+  grid-row: 1 / 3;
+  align-self: center;
+}
+
+.roster-stat-bar strong {
+  color: var(--red);
+  font-family: var(--display);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.roster-stat-bar span {
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.roster-intro {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.roster-intro-media {
+  display: block;
+  width: 100%;
+  height: 365px;
+  border: 2px solid var(--red);
+  border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12);
+}
+
+.roster-intro-copy {
+  padding-right: 26px;
+}
+
+.roster-intro-copy h2 {
+  margin-bottom: 18px;
+  font-family: var(--display);
+  font-size: clamp(38px, 4.4vw, 54px);
+  font-weight: 800;
+  line-height: .95;
+  text-transform: uppercase;
+}
+
+.roster-intro-copy h2 strong {
+  margin-top: 7px;
+  display: block;
+  color: var(--red);
+}
+
+.roster-intro-copy > p:not(.roster-eyebrow) {
+  max-width: 530px;
+  font-size: var(--font-small);
+}
+
+.roster-principles {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #d5d5d5;
+}
+
+.roster-principles div {
+  padding: 18px 10px 0;
+  border-right: 1px solid #d5d5d5;
+  text-align: center;
+}
+
+.roster-principles div:last-child {
+  border-right: 0;
+}
+
+.roster-principles img {
+  width: 43px;
+  height: 43px;
+  margin: 0 auto 7px;
+}
+
+.roster-principles span {
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.full-roster-section,
+.coaching-section {
+  margin-top: 28px;
+}
+
+.full-roster-section {
+  padding: 0 14px 14px;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 4px 15px rgba(0,0,0,.05);
+}
+
+.roster-section-title {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.roster-section-title span {
+  width: 76px;
+  height: 1px;
+  background: var(--red);
+}
+
+.roster-section-title span:first-child::after {
+  width: 4px;
+  height: 4px;
+  margin: -1px auto 0;
+  display: block;
+  border-radius: 50%;
+  background: var(--red);
+  content: "";
+}
+
+.roster-section-title h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.full-roster-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+
+.roster-player {
+  position: relative;
+  min-width: 0;
+  padding-bottom: 12px;
+  overflow: hidden;
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 13px rgba(0,0,0,.06);
+  text-align: center;
+}
+
+.roster-player-photo {
+  height: 225px;
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, transparent 49.5%, rgba(255,255,255,.22) 49.5%, rgba(255,255,255,.22) 50.5%, transparent 50.5%),
+    linear-gradient(145deg, #6e6e73, #222226);
+}
+
+.player-number,
+.player-role {
+  position: absolute;
+  top: 8px;
+  min-width: 38px;
+  height: 37px;
+  padding: 0 8px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  color: #fff;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.player-number {
+  left: 8px;
+  background: var(--red);
+}
+
+.player-role {
+  right: 8px;
+  min-width: 32px;
+  background: #111;
+}
+
+.roster-player h3 {
+  min-height: 34px;
+  margin: 0;
+  padding: 11px 6px 5px;
+  font-family: var(--display);
+  font-size: 16px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.roster-player p {
+  margin: 0 0 2px;
+  color: var(--red);
+  font-size: var(--font-caption);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.roster-player small {
+  font-size: var(--font-caption);
+}
+
+.coaching-section {
+  padding: 0 14px 14px;
+  border: 1px solid #e1e1e1;
+  border-radius: 6px;
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 4px 15px rgba(0,0,0,.05);
+}
+
+.coaching-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.coaching-grid article {
+  min-width: 0;
+  min-height: 240px;
+  display: grid;
+  grid-template-columns: 45% 55%;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.coach-photo {
+  height: 100%;
+  border-radius: 0;
+}
+
+.coach-copy {
+  padding: 15px 13px;
+}
+
+.coach-copy h3 {
+  margin-bottom: 3px;
+  font-family: var(--display);
+  font-size: 18px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.coach-copy > strong {
+  display: block;
+  margin-bottom: 11px;
+  color: var(--red);
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  text-transform: uppercase;
+}
+
+.coach-copy p {
+  min-height: 117px;
+  margin-bottom: 10px;
+  font-size: var(--font-caption);
+  line-height: 1.4;
+}
+
+.coach-copy > div {
+  display: flex;
+  gap: 9px;
+}
+
+.coach-copy img {
+  width: 17px;
+  height: 17px;
+}
+
+.roster-cta {
+  position: relative;
+  min-height: 150px;
+  margin-top: 24px;
+  padding: 28px 42px;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: center;
+  gap: 40px;
+  overflow: hidden;
+  border-radius: 6px;
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(111,0,3,.96), rgba(232,13,21,.93)),
+    repeating-linear-gradient(135deg, transparent 0 10px, rgba(255,255,255,.06) 10px 11px);
+}
+
+.roster-cta::before,
+.roster-cta::after {
+  position: absolute;
+  width: 125px;
+  height: 95px;
+  border: 3px solid rgba(255,255,255,.09);
+  content: "";
+  transform: skew(-8deg);
+}
+
+.roster-cta::before {
+  bottom: -25px;
+  left: -20px;
+}
+
+.roster-cta::after {
+  right: -25px;
+  bottom: -30px;
+}
+
+.roster-cta > div {
+  position: relative;
+  z-index: 1;
+}
+
+.roster-cta h2 {
+  margin-bottom: 7px;
+  font-family: var(--display);
+  font-size: 31px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.roster-cta p {
+  margin: 0;
+  font-size: var(--font-small);
+}
+
+.roster-cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.roster-cta-actions .button {
+  min-width: 190px;
+}
+
+@media (min-width: 861px) and (max-width: 1000px) {
+  .roster-hero-grid {
+    min-height: 350px;
+  }
+
+  .roster-hero-copy {
+    padding: 44px 15px 54px 0;
+  }
+
+  .roster-hero h1 {
+    font-size: 57px;
+  }
+
+  .roster-hero-copy > p:not(.roster-eyebrow) {
+    margin-bottom: 16px;
+  }
+
+  .roster-hero-actions .button {
+    min-width: 145px;
+    min-height: 36px;
+  }
+
+  .roster-hero-media {
+    min-height: 350px;
+  }
+
+  .roster-stat-bar {
+    min-height: 92px;
+    padding: 12px 15px;
+  }
+
+  .roster-stat-bar > div {
+    padding-inline: 10px;
+    grid-template-columns: 36px 1fr;
+    column-gap: 9px;
+  }
+
+  .roster-stat-bar img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .roster-stat-bar strong {
+    font-size: 25px;
+  }
+
+  .roster-intro {
+    gap: 36px;
+  }
+
+  .roster-intro-media {
+    height: 280px;
+  }
+
+  .roster-intro-copy {
+    padding-right: 0;
+  }
+
+  .roster-intro-copy h2 {
+    font-size: 36px;
+  }
+
+  .roster-principles {
+    margin-top: 16px;
+  }
+
+  .roster-principles div {
+    padding-top: 12px;
+  }
+
+  .roster-principles img {
+    width: 33px;
+    height: 33px;
+  }
+
+  .full-roster-grid {
+    gap: 10px;
+  }
+
+  .roster-player-photo {
+    height: 155px;
+  }
+
+  .player-number,
+  .player-role {
+    min-width: 29px;
+    height: 29px;
+    padding-inline: 6px;
+    font-size: 17px;
+  }
+
+  .player-role {
+    min-width: 26px;
+  }
+
+  .roster-player h3 {
+    min-height: 40px;
+    font-size: 14px;
+  }
+
+  .coaching-grid {
+    gap: 10px;
+  }
+
+  .coaching-grid article {
+    min-height: 225px;
+  }
+
+  .coach-copy {
+    padding: 11px 9px;
+  }
+
+  .coach-copy h3 {
+    font-size: 15px;
+  }
+
+  .coach-copy p {
+    min-height: 125px;
+  }
+
+  .roster-cta {
+    min-height: 125px;
+    padding: 22px 34px;
+  }
+}
+
+@media (max-width: 860px) {
+  .roster-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roster-hero-copy {
+    padding: 48px 0 34px;
+  }
+
+  .roster-hero-media {
+    min-height: 320px;
+    margin: 0;
+  }
+
+  .roster-stat-bar {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .roster-stat-bar > div {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .roster-stat-bar > div:nth-child(3) {
+    border-right: 0;
+  }
+
+  .roster-stat-bar > div:nth-child(n+4) {
+    border-bottom: 0;
+  }
+
+  .roster-intro {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .roster-intro-copy {
+    padding: 0;
+  }
+
+  .full-roster-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .coaching-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .coaching-grid article {
+    min-height: 235px;
+  }
+
+  .coach-copy p {
+    min-height: 105px;
+  }
+
+  .roster-cta {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+
+@media (max-width: 680px) {
+  .roster-hero h1 {
+    font-size: 52px;
+  }
+
+  .roster-hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .roster-hero-actions .button {
+    width: 100%;
+  }
+
+  .roster-hero-media {
+    min-height: 260px;
+  }
+
+  .roster-stat-bar {
+    padding-inline: 10px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .roster-stat-bar > div,
+  .roster-stat-bar > div:nth-child(3) {
+    padding: 14px 8px;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .roster-stat-bar > div:nth-child(even) {
+    border-right: 0;
+  }
+
+  .roster-stat-bar > div:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  .roster-intro-media {
+    height: 290px;
+  }
+
+  .roster-intro-copy h2 {
+    font-size: 35px;
+  }
+
+  .roster-principles {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .roster-principles div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .roster-principles div:nth-child(-n+2) {
+    padding-bottom: 14px;
+    border-bottom: 1px solid #d5d5d5;
+  }
+
+  .roster-section-title span {
+    width: 38px;
+  }
+
+  .roster-section-title h2 {
+    font-size: 25px;
+  }
+
+  .full-roster-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .roster-player-photo {
+    height: 205px;
+  }
+
+  .coaching-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .coaching-grid article {
+    grid-template-columns: 40% 60%;
+  }
+
+  .coach-copy p {
+    min-height: 0;
+  }
+
+  .roster-cta {
+    padding: 25px 20px;
+  }
+
+  .roster-cta-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .roster-cta-actions .button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .full-roster-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roster-player-photo {
+    height: 300px;
+  }
+
+  .coaching-grid article {
+    grid-template-columns: 1fr;
+  }
+
+  .coach-photo {
+    height: 270px;
+  }
+}

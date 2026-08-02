@@ -1,0 +1,225 @@
+<section class="schedule-hero">
+  <div class="container schedule-hero-grid">
+    <div class="schedule-hero-copy" data-reveal="left">
+      <p>DMV Warriors</p>
+      <h1>Sched<span>ule</span></h1>
+    </div>
+    <img
+      class="schedule-hero-media"
+      src=""
+      alt="Basketball player action shot"
+      data-placeholder-label="Player action image"
+      data-reveal="scale"
+      data-motion-media
+    />
+  </div>
+</section>
+
+<div class="schedule-page">
+  <section class="container schedule-stat-bar" data-stagger aria-label="Team statistics">
+    <div><img src="assets/icons/users.svg" alt="" /><strong>18+</strong><span>Players</span></div>
+    <div><img src="assets/icons/calendar.svg" alt="" /><strong>25+</strong><span>Games per season</span></div>
+    <div><img src="assets/icons/trophy.svg" alt="" /><strong><span data-current-season="year">2026</span></strong><span>Season</span></div>
+    <div><img src="assets/icons/heart.svg" alt="" /><strong>12+</strong><span>Community events</span></div>
+    <div><img src="assets/icons/users.svg" alt="" /><strong>1000+</strong><span>Fans</span></div>
+  </section>
+
+  <section class="container next-calendar-grid">
+    <article class="schedule-next-game" id="tickets">
+      <div class="schedule-next-heading">
+        <span></span><b>&#9733;</b><h2>Next Game</h2><b>&#9733;</b><span></span>
+      </div>
+      <div class="schedule-matchup">
+        <div>
+          <img src="assets/bmv_logo_transparent.png" alt="DMV Warriors" width="1024" height="1024" loading="lazy" decoding="async" />
+        </div>
+        <strong>VS</strong>
+        <div>
+          <img src="assets/icons/shield.svg" alt="" />
+          <h3>Capital City<small>Kings</small></h3>
+        </div>
+      </div>
+      <div class="schedule-game-meta">
+        <dl>
+          <div><dt><img src="assets/icons/calendar.svg" alt="" />Date</dt><dd>August 22, 2026</dd></div>
+          <div><dt><img src="assets/icons/clock.svg" alt="" />Time</dt><dd>7:00 PM</dd></div>
+          <div><dt><img src="assets/icons/pin.svg" alt="" />Venue</dt><dd>Prince George's Sports &amp; Learning Complex<br />Landover, MD</dd></div>
+        </dl>
+      <div class="schedule-countdown" data-stagger data-game-date="2026-08-22T19:00:00-04:00">
+          <div><strong data-count="days">18</strong><span>Days</span></div>
+          <div><strong data-count="hours">12</strong><span>Hrs</span></div>
+          <div><strong data-count="minutes">20</strong><span>Mins</span></div>
+          <div><strong data-count="seconds">45</strong><span>Secs</span></div>
+        </div>
+      </div>
+    </article>
+
+    <section class="schedule-calendar" aria-labelledby="calendar-title">
+      <div class="schedule-calendar-heading">
+        <h2 id="calendar-title">Calendar View</h2>
+        <div>
+          <button type="button" class="calendar-nav calendar-prev" aria-label="Previous month">
+            <img src="assets/icons/arrow-right.svg" alt="" />
+          </button>
+          <strong data-calendar-label aria-live="polite" aria-atomic="true">August 2026</strong>
+          <button type="button" class="calendar-nav calendar-next" aria-label="Next month">
+            <img src="assets/icons/arrow-right.svg" alt="" />
+          </button>
+        </div>
+      </div>
+      <div class="calendar-weekdays" aria-hidden="true">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="calendar-days" data-calendar-grid role="grid" aria-label="August 2026 schedule calendar"></div>
+      <div class="calendar-legend">
+        <span><i class="home-dot"></i>Home</span>
+        <span><i class="away-dot"></i>Away</span>
+        <span><i class="event-dot"></i>Other events</span>
+      </div>
+    </section>
+  </section>
+
+  <section class="container season-layout">
+    <div class="season-schedule">
+      <div class="schedule-panel-heading">
+        <h2 data-current-season="label">2026 Season Schedule</h2>
+        <label for="schedule-month">
+          <span class="sr-only">Filter games by month</span>
+          <select id="schedule-month" data-schedule-month>
+            <option value="all">All months</option>
+            <option value="2026-06">June 2026</option>
+            <option value="2026-07">July 2026</option>
+          </select>
+        </label>
+      </div>
+      <div class="schedule-filters" aria-label="Filter schedule">
+        <button class="active" type="button" data-schedule-filter="all">All Games</button>
+        <button type="button" data-schedule-filter="home">Home Games</button>
+        <button type="button" data-schedule-filter="away">Away Games</button>
+      </div>
+      <div class="season-table-wrap" role="region" aria-label="Season schedule table" tabindex="0">
+        <table class="season-table">
+          <caption class="sr-only">DMV Warriors season games, venues, results, and ticket links</caption>
+          <thead>
+            <tr><th>Date</th><th>Opponent</th><th>Venue</th><th>Time</th><th>Result</th><th>Tickets</th></tr>
+          </thead>
+          <tbody>
+            <tr data-location="away" data-game-date="2026-06-07"><td>Sun, Jun 07, 2026</td><td><span class="team-badge">VE</span>Virginia Elite</td><td>Away</td><td>6:00 PM</td><td class="win">W 92-78</td><td><span class="game-complete">Final</span></td></tr>
+            <tr data-location="home" data-game-date="2026-06-11"><td>Thu, Jun 11, 2026</td><td><span class="team-badge">BS</span>Baltimore Storm</td><td>Home</td><td>7:00 PM</td><td class="loss">L 81-88</td><td><span class="game-complete">Final</span></td></tr>
+            <tr data-location="away" data-game-date="2026-06-14"><td>Sun, Jun 14, 2026</td><td><span class="team-badge">DD</span>DMV Dragons</td><td>Away</td><td>6:00 PM</td><td class="win">W 95-91</td><td><span class="game-complete">Final</span></td></tr>
+            <tr data-location="home" data-game-date="2026-06-18"><td>Thu, Jun 18, 2026</td><td><span class="team-badge">MB</span>Maryland Bulls</td><td>Home</td><td>7:00 PM</td><td class="win">W 104-82</td><td><span class="game-complete">Final</span></td></tr>
+            <tr data-location="away" data-game-date="2026-06-21"><td>Sun, Jun 21, 2026</td><td><span class="team-badge">NK</span>Northern Kings</td><td>Away</td><td>7:00 PM</td><td class="loss">L 73-77</td><td><span class="game-complete">Final</span></td></tr>
+            <tr data-location="home" data-game-date="2026-06-25"><td>Thu, Jun 25, 2026</td><td><span class="team-badge">DP</span>DC Panthers</td><td>Home</td><td>7:00 PM</td><td class="win">W 98-85</td><td><span class="game-complete">Final</span></td></tr>
+            <tr class="featured-game" data-location="home" data-game-date="2026-06-28"><td>Sun, Jun 28, 2026</td><td><span class="team-badge">CC</span>Capital City Kings</td><td>Home</td><td>7:00 PM</td><td class="upcoming">Upcoming</td><td><a href="mailto:tickets@dmvwarriors.com?subject=Game%20Tickets">Tickets</a></td></tr>
+            <tr data-location="home" data-game-date="2026-07-02"><td>Thu, Jul 02, 2026</td><td><span class="team-badge">VE</span>Virginia Elite</td><td>Home</td><td>7:00 PM</td><td class="upcoming">Upcoming</td><td><a href="mailto:tickets@dmvwarriors.com?subject=Game%20Tickets">Tickets</a></td></tr>
+            <tr data-location="away" data-game-date="2026-07-05"><td>Sun, Jul 05, 2026</td><td><span class="team-badge">BS</span>Baltimore Storm</td><td>Away</td><td>6:00 PM</td><td class="upcoming">Upcoming</td><td><a href="mailto:tickets@dmvwarriors.com?subject=Game%20Tickets">Tickets</a></td></tr>
+            <tr data-location="away" data-game-date="2026-07-09"><td>Thu, Jul 09, 2026</td><td><span class="team-badge">DD</span>DMV Dragons</td><td>Away</td><td>7:00 PM</td><td class="upcoming">Upcoming</td><td><a href="mailto:tickets@dmvwarriors.com?subject=Game%20Tickets">Tickets</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <button class="button button-outline schedule-reset" type="button" data-schedule-reset>
+        <img src="assets/icons/calendar.svg" alt="" />
+        Reset Schedule Filters
+      </button>
+    </div>
+
+    <aside class="schedule-sidebar">
+      <section class="standings-panel">
+        <div><h2>Standings</h2><p>Mid-Atlantic Division</p></div>
+        <table id="standings-table">
+          <thead><tr><th>#</th><th>Team</th><th>W</th><th>L</th><th>Pct</th></tr></thead>
+          <tbody>
+            <tr class="standings-current"><td>1</td><td><span class="team-badge">DMV</span>DMV Warriors</td><td>8</td><td>2</td><td>.800</td></tr>
+            <tr><td>2</td><td><span class="team-badge">VE</span>Virginia Elite</td><td>7</td><td>3</td><td>.700</td></tr>
+            <tr><td>3</td><td><span class="team-badge">MB</span>Maryland Bulls</td><td>6</td><td>4</td><td>.600</td></tr>
+            <tr><td>4</td><td><span class="team-badge">BS</span>Baltimore Storm</td><td>5</td><td>5</td><td>.500</td></tr>
+            <tr><td>5</td><td><span class="team-badge">CC</span>Capital City Kings</td><td>4</td><td>6</td><td>.400</td></tr>
+            <tr><td>6</td><td><span class="team-badge">DD</span>DMV Dragons</td><td>3</td><td>7</td><td>.300</td></tr>
+            <tr><td>7</td><td><span class="team-badge">NK</span>Northern Kings</td><td>2</td><td>8</td><td>.200</td></tr>
+            <tr><td>8</td><td><span class="team-badge">DP</span>DC Panthers</td><td>1</td><td>9</td><td>.100</td></tr>
+          </tbody>
+        </table>
+        <div class="standings-link">
+          <a href="#standings-table" data-safe-href="#standings-table">View Standings Table <img src="assets/icons/arrow-right.svg" alt="" /></a>
+        </div>
+      </section>
+      <section class="download-panel">
+        <h2>Download Schedule</h2>
+        <p>Get the full season schedule on your device.</p>
+        <button class="button button-outline" type="button" data-download-schedule>
+          <img src="assets/icons/download.svg" alt="" />
+          Download Calendar
+        </button>
+        <p class="download-status" aria-live="polite"></p>
+      </section>
+    </aside>
+  </section>
+
+  <section class="container venue-game-grid">
+    <article class="home-venue">
+      <h2>Our Home Venue</h2>
+      <div class="venue-image media-placeholder"><span>Venue image</span></div>
+      <div class="venue-address">
+        <img src="assets/icons/pin.svg" alt="" />
+        <div><strong>Prince George's Sports &amp; Learning Complex</strong><span>8001 Sheriff Rd, Landover, MD 20785</span></div>
+      </div>
+      <div class="venue-facts">
+        <div><img src="assets/icons/users.svg" alt="" /><span>Capacity<strong>3,500</strong></span></div>
+        <div><img src="assets/icons/calendar.svg" alt="" /><span>Opened<strong>2018</strong></span></div>
+        <div><img src="assets/icons/parking.svg" alt="" /><span>Parking<strong>Free</strong></span></div>
+        <div><img src="assets/icons/cup.svg" alt="" /><span>Concessions<strong>Available</strong></span></div>
+      </div>
+    </article>
+
+    <article class="game-day-cta">
+      <img class="game-day-image" src="" alt="Fans cheering at a DMV Warriors game" data-placeholder-label="Fans image" />
+      <div class="game-day-copy">
+        <h2>Don't Miss a Game!</h2>
+        <p>Cheer for the DMV Warriors and be part of the action live at the arena.</p>
+        <a class="button button-dark" href="mailto:tickets@dmvwarriors.com?subject=DMV%20Warriors%20Tickets">
+          <img src="assets/icons/ticket.svg" alt="" />
+          Buy Tickets Now
+        </a>
+      </div>
+    </article>
+  </section>
+
+  <section class="container season-stats">
+    <h2 data-current-season="label">2026 Season Stats</h2>
+    <div>
+      <article><img src="assets/icons/shield.svg" alt="" /><strong>8</strong><span>Wins</span></article>
+      <article><img src="assets/icons/target.svg" alt="" /><strong>2</strong><span>Losses</span></article>
+      <article><img src="assets/icons/basketball.svg" alt="" /><strong>.800</strong><span>Win %</span></article>
+      <article><img src="assets/icons/basketball.svg" alt="" /><strong>872</strong><span>Points scored</span></article>
+      <article><img src="assets/icons/clock.svg" alt="" /><strong>749</strong><span>Points allowed</span></article>
+      <article><img src="assets/icons/trending.svg" alt="" /><strong>+123</strong><span>Point differential</span></article>
+    </div>
+  </section>
+
+  <section class="container schedule-partners">
+    <h2>Proud Partners of DMV Warriors</h2>
+    <div aria-label="Partner logo placeholders">
+      <div>Partner<br />Logo</div><div>Partner<br />Logo</div>
+      <div>Partner<br />Logo</div><div>Partner<br />Logo</div>
+      <div>Partner<br />Logo</div><div>Partner<br />Logo</div>
+      <div>Partner<br />Logo</div><div>Partner<br />Logo</div>
+    </div>
+  </section>
+
+  <section class="container schedule-sponsor-cta">
+    <div>
+      <h2>Interested in Sponsoring<br />the DMV Warriors?</h2>
+      <p>Become part of our growing basketball community and make an impact on and off the court.</p>
+    </div>
+    <div>
+      <a class="button button-light" href="mailto:info@dmvwarriors.com">
+        <img src="assets/icons/mail.svg" alt="" />
+        Contact Us
+      </a>
+      <a class="button button-dark" href="mailto:info@dmvwarriors.com?subject=Sponsorship">
+        <img src="assets/icons/heart.svg" alt="" />
+        Become a Sponsor
+      </a>
+    </div>
+  </section>
+</div>
