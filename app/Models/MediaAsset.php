@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\MediaKind;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -36,6 +37,11 @@ class MediaAsset extends Model implements HasMedia
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function galleryItems(): HasMany
+    {
+        return $this->hasMany(GalleryItem::class);
     }
 
     public function registerMediaCollections(): void

@@ -16,6 +16,7 @@ class PageEditorSchema
             'next-game',
             'schedule-section',
             'partner-logos',
+            'social-gallery',
         ],
         'about' => ['leadership-grid'],
         'roster' => ['full-roster-grid', 'coaching-grid'],

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasContentRevisions;
+use App\Services\SiteChromeService;
 use Illuminate\Database\Eloquent\Model;
 
 class SiteSetting extends Model
@@ -10,6 +11,12 @@ class SiteSetting extends Model
     use HasContentRevisions;
 
     protected $guarded = ['id'];
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => app(SiteChromeService::class)->forget());
+        static::deleted(fn () => app(SiteChromeService::class)->forget());
+    }
 
     protected function casts(): array
     {

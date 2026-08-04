@@ -6,13 +6,19 @@ use App\Enums\GameStatus;
 use App\Models\Game;
 use App\Models\Post;
 use App\Models\Season;
+use App\Models\SocialLink;
 use App\Models\SponsorTier;
+use App\Services\InstagramFeedService;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
 
 class SiteTemplateHydrator
 {
+    public function __construct(
+        private readonly InstagramFeedService $instagramFeed
+    ) {}
+
     public function hydrate(string $templateKey, DOMDocument $document, DOMElement $root): void
     {
         $season = Season::query()
@@ -76,6 +82,69 @@ class SiteTemplateHydrator
 
         $this->hydratePartnerLogos($document, $root, 'partner-logos');
         $this->setLink($document, $root, ".//*[contains(concat(' ', normalize-space(@class), ' '), ' news-section ')]//a[1]", route('news.index'));
+        $this->hydrateInstagram($document, $root);
+    }
+
+    private function hydrateInstagram(DOMDocument $document, DOMElement $root): void
+    {
+        $posts = $this->instagramFeed->posts(6);
+        $instagram = SocialLink::query()
+            ->where('platform', 'instagram')
+            ->where('is_enabled', true)
+            ->first();
+        $profileUrl = trim((string) $instagram?->url);
+        $username = (string) ($posts->first()['username'] ?? '');
+        $socialIcons = $this->first(
+            $document,
+            $root,
+            ".//*[contains(concat(' ', normalize-space(@class), ' '), ' social-heading ')]/div[1]"
+        );
+        $socialIcons?->parentNode?->removeChild($socialIcons);
+
+        if ($posts->isNotEmpty()) {
+            $gallery = $this->first(
+                $document,
+                $root,
+                ".//*[contains(concat(' ', normalize-space(@class), ' '), ' gallery-grid ')]"
+            );
+            if ($gallery) {
+                $gallery->setAttribute(
+                    'class',
+                    trim($gallery->getAttribute('class').' instagram-carousel-host')
+                );
+                $this->replaceInner(
+                    $document,
+                    $gallery,
+                    view('site.partials.instagram-posts', compact('posts'))->render()
+                );
+            }
+        }
+
+        if ($profileUrl !== '' && $profileUrl !== '#') {
+            $this->setLink(
+                $document,
+                $root,
+                ".//*[contains(concat(' ', normalize-space(@class), ' '), ' social-gallery-action ')]//a[1]",
+                $profileUrl
+            );
+        } elseif ($username !== '') {
+            $profileUrl = 'https://www.instagram.com/'.$username.'/';
+            $this->setLink(
+                $document,
+                $root,
+                ".//*[contains(concat(' ', normalize-space(@class), ' '), ' social-gallery-action ')]//a[1]",
+                $profileUrl
+            );
+        }
+
+        if ($username !== '') {
+            $this->setFirstText(
+                $document,
+                $root,
+                ".//*[contains(concat(' ', normalize-space(@class), ' '), ' social-heading ')]//h2[1]",
+                '@'.$username
+            );
+        }
     }
 
     private function hydrateAbout(DOMDocument $document, DOMElement $root, ?Season $season): void

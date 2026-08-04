@@ -39,6 +39,7 @@
                 @if (auth()->user()->can('manage pages') || auth()->user()->contentPermissions()->exists())<a href="{{ route('admin.pages') }}" wire:navigate class="{{ request()->routeIs('admin.pages*') ? 'active' : '' }}"><img src="{{ asset('assets/icons/clipboard.svg') }}" alt="">Website pages</a>@endif
                 @can('manage news')<a href="{{ route('admin.resources', 'posts') }}" wire:navigate class="{{ request()->route('resource') === 'posts' ? 'active' : '' }}"><img src="{{ asset('assets/icons/mail.svg') }}" alt="">News</a>@endcan
                 @can('manage news')<a href="{{ route('admin.resources', 'categories') }}" wire:navigate class="admin-nav-subtle {{ request()->route('resource') === 'categories' ? 'active' : '' }}"><img src="{{ asset('assets/icons/clipboard.svg') }}" alt="">News categories</a>@endcan
+                @can('manage media')<a href="{{ route('admin.gallery') }}" wire:navigate class="{{ request()->routeIs('admin.gallery') ? 'active' : '' }}"><img src="{{ asset('assets/icons/binoculars.svg') }}" alt="">Website gallery</a>@endcan
                 @can('manage media')<a href="{{ route('admin.media') }}" wire:navigate class="{{ request()->routeIs('admin.media') ? 'active' : '' }}"><img src="{{ asset('assets/icons/star.svg') }}" alt="">Images and files</a>@endcan
             </div>
             @can('manage roster')
@@ -94,6 +95,7 @@
         </header>
         <main id="admin-main-content" class="admin-content" tabindex="-1">
             @if (session('success'))<div class="admin-alert" role="status">{{ session('success') }}</div>@endif
+            @if (session('error'))<div class="admin-alert error" role="alert">{{ session('error') }}</div>@endif
             {{ $slot }}
         </main>
     </div>

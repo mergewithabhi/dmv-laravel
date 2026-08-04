@@ -56,4 +56,11 @@ return [
         'action' => env('TURNSTILE_ACTION'),
     ],
 
+    'instagram' => [
+        'refresh_url' => env('INSTAGRAM_REFRESH_URL', 'https://graph.instagram.com/refresh_access_token'),
+        'graph_url' => env('INSTAGRAM_GRAPH_URL', 'https://graph.instagram.com'),
+        'media_endpoint' => env('INSTAGRAM_MEDIA_ENDPOINT', 'https://graph.instagram.com/me/media'),
+        'cache_minutes' => (int) env('INSTAGRAM_CACHE_MINUTES', 15),
+    ],
+
 ];

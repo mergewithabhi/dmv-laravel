@@ -25,21 +25,10 @@
                             <option value="sponsor">Sponsor</option>
                         </select>
                     </div>
-                    <div class="admin-filter">
-                        <label for="submission-status">Status</label>
-                        <select id="submission-status" wire:model.live="statusFilter">
-                            <option value="">All statuses</option>
-                            <option value="new">New</option>
-                            <option value="in_progress">In progress</option>
-                            <option value="resolved">Resolved</option>
-                            <option value="spam">Spam</option>
-                            <option value="archived">Archived</option>
-                        </select>
-                    </div>
                 </div>
                 <div class="admin-list-summary">
                     <span>{{ number_format($submissions->total()) }} {{ str('submission')->plural($submissions->total()) }}</span>
-                    <span wire:loading wire:target="search,typeFilter,statusFilter">Updating...</span>
+                    <span wire:loading wire:target="search,typeFilter">Updating...</span>
                 </div>
             </div>
 
@@ -47,7 +36,7 @@
                 <table class="admin-table admin-table-list">
                     <caption class="sr-only">Contact and sponsor submissions</caption>
                     <thead>
-                    <tr><th>Received</th><th>Type</th><th>From</th><th>Status</th><th>Actions</th></tr>
+                    <tr><th>Received</th><th>Type</th><th>From</th><th>Actions</th></tr>
                     </thead>
                     <tbody>
                     @forelse ($submissions as $submission)
@@ -55,7 +44,6 @@
                             <td>{{ $submission->created_at->format('M j, Y g:i A') }}</td>
                             <td>{{ ucfirst($submission->type) }}</td>
                             <td>{{ $submission->name ?: 'Not provided' }}</td>
-                            <td><span class="status-badge {{ $submission->status->value }}">{{ str($submission->status->value)->headline() }}</span></td>
                             <td>
                                 <div class="admin-actions">
                                     <button
@@ -76,7 +64,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="admin-empty">No submissions match these filters.</td></tr>
+                        <tr><td colspan="4" class="admin-empty">No submissions match these filters.</td></tr>
                     @endforelse
                     </tbody>
                 </table>
@@ -105,40 +93,16 @@
                         @foreach ($selected->payload as $label => $value)
                             <div>
                                 <dt>{{ \Illuminate\Support\Str::headline($label) }}</dt>
-                                <dd class="admin-pre-wrap">{{ is_scalar($value) ? $value : json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</dd>
+                                <dd class="admin-pre-wrap">
+                                    @if (is_bool($value))
+                                        {{ $value ? 'Yes' : 'No' }}
+                                    @else
+                                        {{ is_scalar($value) ? $value : json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}
+                                    @endif
+                                </dd>
                             </div>
                         @endforeach
                     </dl>
-
-                    <form class="admin-form-grid admin-inbox-form" wire:submit="save">
-                        <div class="admin-field full">
-                            <label for="selected-status">Status</label>
-                            <select id="selected-status" wire:model="selectedStatus" @error('selectedStatus') aria-invalid="true" aria-describedby="selected-status-error" @enderror>
-                                <option value="new">New</option>
-                                <option value="in_progress">In progress</option>
-                                <option value="resolved">Resolved</option>
-                                <option value="spam">Spam</option>
-                                <option value="archived">Archived</option>
-                            </select>
-                            @error('selectedStatus')<span id="selected-status-error" class="admin-field-error">{{ $message }}</span>@enderror
-                        </div>
-                        <div class="admin-field full">
-                            <label for="submission-assignee">Assigned to</label>
-                            <select id="submission-assignee" wire:model="assignedTo" @error('assignedTo') aria-invalid="true" aria-describedby="submission-assignee-error" @enderror>
-                                <option value="">Unassigned</option>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('assignedTo')<span id="submission-assignee-error" class="admin-field-error">{{ $message }}</span>@enderror
-                        </div>
-                        <div class="admin-field full">
-                            <label for="submission-notes">Internal notes</label>
-                            <textarea id="submission-notes" wire:model="internalNotes" @error('internalNotes') aria-invalid="true" aria-describedby="submission-notes-error" @enderror></textarea>
-                            @error('internalNotes')<span id="submission-notes-error" class="admin-field-error">{{ $message }}</span>@enderror
-                        </div>
-                        <button class="admin-button" type="submit">Save changes</button>
-                    </form>
                 </div>
             </aside>
         @endif

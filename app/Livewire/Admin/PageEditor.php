@@ -94,6 +94,15 @@ class PageEditor extends Component
                 }
                 $this->sections[$section->id]['payload'][$fieldId] = $value;
             }
+
+            $editableFieldIds = array_fill_keys(
+                array_keys($this->editorSchema->fields($this->page->template_key, $section)),
+                true
+            );
+            $this->sections[$section->id]['payload'] = array_intersect_key(
+                $this->sections[$section->id]['payload'] ?? [],
+                $editableFieldIds
+            );
         }
     }
 
@@ -535,6 +544,7 @@ class PageEditor extends Component
             str_contains($sectionKey, 'schedule'), $sectionKey === 'next_game' => 'games',
             str_contains($sectionKey, 'partner') => 'sponsors',
             str_contains($sectionKey, 'standing') => 'standings',
+            $sectionKey === 'community' && $this->page->template_key === 'home' => 'social-links',
             default => null,
         };
 

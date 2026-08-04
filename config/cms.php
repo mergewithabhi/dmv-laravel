@@ -23,7 +23,7 @@ return [
                 'news' => ['label' => 'Latest news', 'selector' => '.news-section'],
                 'team_schedule' => ['label' => 'Team and schedule', 'selector' => '.team-schedule-grid'],
                 'partners' => ['label' => 'Partners', 'selector' => '.partners-section'],
-                'community' => ['label' => 'Community and social gallery', 'selector' => '.community-grid'],
+                'community' => ['label' => 'Community and Instagram', 'selector' => '.community-grid'],
                 'newsletter' => ['label' => 'Newsletter', 'selector' => '.newsletter'],
                 'sponsor_cta' => ['label' => 'Sponsor call to action', 'selector' => '.sponsor-cta'],
             ],
@@ -107,12 +107,13 @@ return [
         'image/gif',
         'image/svg+xml',
         'video/mp4',
+        'video/quicktime',
         'video/webm',
         'application/pdf',
         'text/calendar',
     ],
 
-    'max_upload_kilobytes' => 10240,
+    'max_upload_kilobytes' => 102400,
 
     'retention' => [
         'submission_months' => (int) env('CMS_SUBMISSION_RETENTION_MONTHS', 24),

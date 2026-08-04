@@ -15,13 +15,22 @@ body[data-page="about"] #site-main {
     #ececec;
 }
 
+.about-hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,.94) 38%, rgba(255,255,255,.38) 72%, rgba(255,255,255,.08));
+  content: "";
+  pointer-events: none;
+}
+
 .about-hero::after {
   position: absolute;
   right: -4%;
   bottom: -90px;
   width: 58%;
   height: 230px;
-  z-index: 0;
+  z-index: 1;
   background:
     repeating-linear-gradient(-14deg, transparent 0 13px, rgba(227,11,19,.12) 14px 16px),
     linear-gradient(165deg, transparent 14%, rgba(227,11,19,.7) 15%, transparent 25%);
@@ -93,12 +102,13 @@ body[data-page="about"] #site-main {
 }
 
 .about-hero-media {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   min-height: 480px;
-  margin-right: calc((100vw - min(1180px, calc(100vw - 48px))) / -2);
+  margin: 0;
   border-radius: 0;
   object-fit: cover;
   background:
@@ -846,6 +856,7 @@ body[data-page="about"] #site-main {
   }
 
   .about-hero-media {
+    width: 100%;
     min-height: 320px;
     margin: 0;
   }

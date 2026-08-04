@@ -8,6 +8,7 @@ use App\Models\Page;
 use App\Models\SiteSetting;
 use App\Models\Venue;
 use App\Services\StaticSiteImporter;
+use App\Services\SiteChromeService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -88,5 +89,49 @@ class PublicSiteTest extends TestCase
         $this->assertSame($first, $second);
         $this->assertSame('Editor title', Page::query()->where('slug', 'home')->value('title'));
         $this->assertSame('Editor motto', SiteSetting::value('footer.motto'));
+    }
+
+    public function test_footer_renders_the_structured_link_without_allowing_raw_html(): void
+    {
+        app(StaticSiteImporter::class)->run();
+        SiteSetting::query()->where('key', 'footer.values')->update([
+            'value' => ['value' => 'Designed by <strong>'],
+        ]);
+        SiteSetting::query()->where('key', 'footer.link_text')->update([
+            'value' => ['value' => 'SAPCO Technologies'],
+        ]);
+        SiteSetting::query()->where('key', 'footer.link_url')->update([
+            'value' => ['value' => 'https://sapcotechnologies.com'],
+        ]);
+        app(SiteChromeService::class)->forget();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Designed by &lt;strong&gt;', false)
+            ->assertSee('href="https://sapcotechnologies.com"', false)
+            ->assertSee('SAPCO Technologies');
+    }
+
+    public function test_footer_values_become_clickable_when_link_text_is_blank(): void
+    {
+        app(StaticSiteImporter::class)->run();
+        SiteSetting::query()->where('key', 'footer.values')->update([
+            'value' => ['value' => 'Website by SAPCO'],
+        ]);
+        SiteSetting::query()->where('key', 'footer.link_text')->update([
+            'value' => ['value' => ''],
+        ]);
+        SiteSetting::query()->where('key', 'footer.link_url')->update([
+            'value' => ['value' => 'https://sapcotechnologies.com'],
+        ]);
+        app(SiteChromeService::class)->forget();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee(
+                'href="https://sapcotechnologies.com"',
+                false
+            )
+            ->assertSee('Website by SAPCO');
     }
 }

@@ -268,6 +268,8 @@ class StaticSiteImporter
             ['footer.social_copy', 'Join the Warriors community.', 'Social copy', 'footer', 'text'],
             ['footer.copyright', 'DMV Warriors Basketball. All Rights Reserved.', 'Copyright text', 'footer', 'text'],
             ['footer.values', 'Discipline. Teamwork. Community. Excellence.', 'Footer values', 'footer', 'text'],
+            ['footer.link_text', '', 'Footer link text', 'footer', 'text'],
+            ['footer.link_url', '', 'Footer link URL', 'footer', 'url'],
             ['forms.newsletter_success', 'Thanks. You are on the game-day list.', 'Newsletter success message', 'forms', 'text'],
             ['forms.contact_success', 'Message received. The DMV Warriors team will contact you.', 'Contact success message', 'forms', 'text'],
             ['forms.sponsor_success', 'Thank you. Our partnership team will contact you.', 'Sponsor success message', 'forms', 'text'],
@@ -290,8 +292,8 @@ class StaticSiteImporter
             ['Roster', '/roster', 30],
             ['Schedule', '/schedule', 40],
             ['Sponsors', '/sponsors', 50],
+            ['Gallery', '/gallery', 55],
             ['Contact', '/contact', 60],
-            ['Policies', '/#footer', 70],
         ];
         $footer = [
             ['Home', '/', 10],
@@ -299,6 +301,7 @@ class StaticSiteImporter
             ['Roster', '/roster', 30],
             ['Schedule', '/schedule', 40],
             ['Sponsors', '/sponsors', 50],
+            ['Gallery', '/gallery', 55],
             ['Contact', '/contact', 60],
             ['Policies', '/#footer', 70],
         ];

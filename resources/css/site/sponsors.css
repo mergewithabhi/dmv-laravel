@@ -13,6 +13,15 @@ body[data-page="sponsors"] #site-main {
   background: #080809;
 }
 
+.sponsor-hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(90deg, #080809 0%, rgba(8,8,9,.92) 38%, rgba(8,8,9,.34) 72%, rgba(8,8,9,.08));
+  content: "";
+  pointer-events: none;
+}
+
 .sponsor-hero-grid {
   min-height: 485px;
   display: grid;
@@ -65,10 +74,13 @@ body[data-page="sponsors"] #site-main {
 }
 
 .sponsor-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   min-height: 485px;
-  margin-right: calc((100vw - min(1180px, calc(100vw - 48px))) / -2);
+  margin: 0;
   border-radius: 0;
   object-fit: cover;
   background:
@@ -473,7 +485,7 @@ body[data-page="sponsors"] #site-main {
 @media (max-width: 860px) {
   .sponsor-hero-grid { grid-template-columns: 1fr; }
   .sponsor-hero-copy { padding: 48px 0 32px; }
-  .sponsor-hero-media { min-height: 300px; margin: 0; }
+  .sponsor-hero-media { width: 100%; min-height: 300px; margin: 0; }
   .sponsor-stat-bar { grid-template-columns: repeat(3, 1fr); }
   .sponsor-stat-bar > div { border-bottom: 1px solid #ddd; }
   .sponsor-stat-bar > div:nth-child(3) { border-right: 0; }

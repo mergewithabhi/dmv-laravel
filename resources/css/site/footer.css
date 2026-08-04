@@ -267,6 +267,7 @@
   z-index: 1;
   border-top: 1px solid #303030;
   background: rgba(0, 0, 0, 0.32);
+  text-transform: uppercase;
 }
 
 .footer-bottom .container {
@@ -281,11 +282,22 @@
 
 .footer-bottom p {
   margin: 0;
+  text-transform: uppercase;
 }
 
 .footer-bottom p:last-child {
   color: #8f8f92;
   font-family: var(--display);
   font-weight: 700;
-  text-transform: uppercase;
+
+}
+
+.footer-bottom p:last-child a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-bottom p:last-child a:hover {
+  color: var(--red);
 }

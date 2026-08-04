@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\GalleryItem;
 use App\Models\Page;
 use App\Models\Person;
 use App\Models\Post;
@@ -12,7 +13,17 @@ class SitemapController extends Controller
 {
     public function __invoke(): Response
     {
-        $urls = collect();
+        $galleryModified = GalleryItem::query()
+            ->published()
+            ->latest('updated_at')
+            ->first()
+            ?->updated_at ?? now()->startOfDay();
+        $urls = collect([
+            [
+                'location' => route('gallery.index'),
+                'modified' => $galleryModified,
+            ],
+        ]);
 
         Page::query()->published()->where('is_indexable', true)->get()->each(
             fn (Page $page) => $urls->push([

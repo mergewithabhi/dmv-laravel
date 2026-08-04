@@ -7,7 +7,7 @@
         <form class="admin-panel-body admin-form-grid" wire:submit="uploadAsset">
             <div class="admin-field">
                 <label for="media-upload">File</label>
-                <input id="media-upload" type="file" wire:model="upload" accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.mp4,.webm,.pdf,.ics" @error('upload') aria-invalid="true" aria-describedby="media-upload-error" @enderror>
+                <input id="media-upload" type="file" wire:model="upload" accept=".jpg,.jpeg,.png,.webp,.gif,.svg,.mp4,.mov,.webm,.pdf,.ics" @error('upload') aria-invalid="true" aria-describedby="media-upload-error" @enderror>
                 @error('upload')<span id="media-upload-error" class="admin-field-error">{{ $message }}</span>@enderror
             </div>
             <div class="admin-field">

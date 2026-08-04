@@ -7,6 +7,8 @@ use App\Models\SiteSetting;
 use App\Rules\SafeUrl;
 use App\Services\SiteChromeService;
 use App\Services\AdminMediaUploadService;
+use App\Services\InstagramConnectionService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -31,7 +33,7 @@ class SettingsEditor extends Component
     {
         $this->authorizeAccess();
 
-        foreach (SiteSetting::query()->get() as $setting) {
+        foreach ($this->editableSettings()->get() as $setting) {
             $this->values[$setting->id] = $setting->value['value'] ?? null;
             $this->versions[$setting->id] = (int) $setting->lock_version;
         }
@@ -40,7 +42,7 @@ class SettingsEditor extends Component
     public function save(SiteChromeService $chrome): void
     {
         $this->authorizeAccess();
-        $settings = SiteSetting::query()->get();
+        $settings = $this->editableSettings()->get();
         $rules = [];
         foreach ($settings as $setting) {
             $rules['values.'.$setting->id] = match ($setting->type) {
@@ -48,13 +50,14 @@ class SettingsEditor extends Component
                 'url' => ['nullable', 'string', 'max:2048', new SafeUrl],
                 'number' => ['nullable', 'numeric'],
                 'media' => ['nullable', 'integer', 'exists:media_assets,id'],
+                'boolean' => ['boolean'],
                 default => ['nullable', 'string', 'max:10000'],
             };
         }
         $validated = $this->validate($rules)['values'];
 
         DB::transaction(function () use ($validated): void {
-            $lockedSettings = SiteSetting::query()->lockForUpdate()->get();
+            $lockedSettings = $this->editableSettings()->lockForUpdate()->get();
 
             foreach ($lockedSettings as $setting) {
                 if (($this->versions[$setting->id] ?? null) !== (int) $setting->lock_version) {
@@ -66,6 +69,9 @@ class SettingsEditor extends Component
                 $value = $validated[$setting->id] ?? null;
                 if (in_array($setting->type, ['number', 'media'], true) && $value !== null && $value !== '') {
                     $value = (int) $value;
+                }
+                if ($setting->type === 'boolean') {
+                    $value = (bool) $value;
                 }
 
                 $setting->update([
@@ -117,14 +123,20 @@ class SettingsEditor extends Component
         unset($this->mediaUploads[$key]);
     }
 
-    public function render()
+    public function render(InstagramConnectionService $instagram)
     {
         $this->authorizeAccess();
 
         return view('livewire.admin.settings-editor', [
-            'groups' => SiteSetting::query()->orderBy('group')->orderBy('label')->get()->groupBy('group'),
+            'groups' => $this->editableSettings()->orderBy('group')->orderBy('label')->get()->groupBy('group'),
             'media' => MediaAsset::query()->with('media')->orderBy('title')->get(),
+            'instagramConnection' => $instagram->connection(),
         ])->title('Settings')->layoutData(['heading' => 'Global Settings']);
+    }
+
+    private function editableSettings(): Builder
+    {
+        return SiteSetting::query()->where('group', '!=', 'migration');
     }
 
     private function authorizeAccess(): void

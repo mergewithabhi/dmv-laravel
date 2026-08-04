@@ -210,24 +210,25 @@ class AdminInteractionAuditTest extends TestCase
         $this->assertSame(PublicationStatus::InReview, $page->workflow_status);
     }
 
-    public function test_submission_cannot_be_assigned_to_a_user_without_inbox_access(): void
+    public function test_submission_inbox_does_not_expose_workflow_controls(): void
     {
         $manager = $this->cmsUser(['manage submissions'], 'Inbox Auditor');
-        $outsider = $this->cmsUser(['manage pages'], 'Page Only User');
         $submission = FormSubmission::query()->create([
             'type' => 'contact',
             'status' => 'new',
-            'payload' => ['message' => 'Hello'],
+            'consent' => true,
+            'payload' => ['message' => 'Hello', 'consent' => true],
         ]);
 
         Livewire::actingAs($manager)
             ->test(SubmissionsInbox::class)
             ->call('select', $submission->id)
-            ->set('assignedTo', $outsider->id)
-            ->call('save')
-            ->assertHasErrors('assignedTo');
-
-        $this->assertNull($submission->refresh()->assigned_to);
+            ->assertSee('Hello')
+            ->assertSee('Consent')
+            ->assertSee('Yes')
+            ->assertDontSee('Assigned to')
+            ->assertDontSee('Internal notes')
+            ->assertDontSee('All statuses');
     }
 
     public function test_required_two_factor_authentication_cannot_be_disabled(): void

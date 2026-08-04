@@ -24,10 +24,11 @@ class AdminMediaUploadService
         $validKind = match ($kind) {
             'image' => str_starts_with($mime, 'image/') && ! $isSvg,
             'icon' => str_starts_with($mime, 'image/') || $isSvg,
+            'video' => in_array($mime, ['video/mp4', 'video/quicktime', 'video/webm'], true),
             default => false,
         };
         if (! $validKind) {
-            throw ValidationException::withMessages(['upload' => 'Choose a valid image file.']);
+            throw ValidationException::withMessages(['upload' => 'Choose a valid image or video file.']);
         }
         if ($kind === 'image' && @getimagesize($upload->getRealPath()) === false) {
             throw ValidationException::withMessages(['upload' => 'The image is malformed.']);
@@ -39,6 +40,9 @@ class AdminMediaUploadService
             $mime === 'image/png' => 'png',
             $mime === 'image/webp' => 'webp',
             $mime === 'image/gif' => 'gif',
+            $mime === 'video/mp4' => 'mp4',
+            $mime === 'video/quicktime' => 'mov',
+            $mime === 'video/webm' => 'webm',
             default => null,
         };
         if (! $extension) {
@@ -62,19 +66,26 @@ class AdminMediaUploadService
             'created_by' => auth()->id(),
         ]);
 
-        if ($isSvg) {
-            $sanitized = (new Sanitizer)->sanitize(file_get_contents($upload->getRealPath()));
-            if ($sanitized === false) {
-                $asset->delete();
-                throw ValidationException::withMessages(['upload' => 'The SVG could not be sanitized.']);
+        try {
+            if ($isSvg) {
+                $sanitized = (new Sanitizer)->sanitize(file_get_contents($upload->getRealPath()));
+                if ($sanitized === false) {
+                    throw ValidationException::withMessages(['upload' => 'The SVG could not be sanitized.']);
+                }
+                $asset->addMediaFromString($sanitized)
+                    ->usingFileName($baseName.'.'.$extension)
+                    ->toMediaCollection('file');
+            } else {
+                $asset->addMedia($upload->getRealPath())
+                    ->usingFileName($baseName.'.'.$extension)
+                    ->toMediaCollection('file');
             }
-            $asset->addMediaFromString($sanitized)
-                ->usingFileName($baseName.'.'.$extension)
-                ->toMediaCollection('file');
-        } else {
-            $asset->addMedia($upload->getRealPath())
-                ->usingFileName($baseName.'.'.$extension)
-                ->toMediaCollection('file');
+        } catch (\Throwable $exception) {
+            if ($asset->exists) {
+                $asset->delete();
+            }
+
+            throw $exception;
         }
 
         activity('cms')->causedBy(auth()->user())->performedOn($asset)->log('uploaded media from content editor');

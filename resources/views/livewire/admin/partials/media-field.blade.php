@@ -1,9 +1,11 @@
 @php
     $selectedId = filled($selectedId ?? null) ? (int) $selectedId : null;
     $selectedAsset = $selectedId ? $assets->firstWhere('id', $selectedId) : null;
-    $allowedAssets = $assets->where('kind.value', $inputKind);
+    $inputKinds = $inputKinds ?? [$inputKind];
+    $allowedAssets = $assets->filter(fn ($asset) => in_array($asset->kind->value, $inputKinds, true));
     $selectedMedia = $selectedAsset?->getFirstMedia('file');
     $dialogId = $inputId.'-library';
+    $mediaLabel = $mediaLabel ?? ($inputKind === 'icon' ? 'icon' : 'image');
 @endphp
 
 <div class="admin-media-field">
@@ -11,8 +13,10 @@
         <div class="admin-media-preview">
             @if ($selectedAsset && str_starts_with($selectedMedia?->mime_type ?? '', 'image/'))
                 <img src="{{ $selectedAsset->url('thumb') ?: $selectedAsset->url() }}" alt="">
+            @elseif ($selectedAsset && str_starts_with($selectedMedia?->mime_type ?? '', 'video/'))
+                <video src="{{ $selectedAsset->url() }}" muted playsinline preload="metadata"></video>
             @else
-                <span>No {{ $inputKind === 'icon' ? 'icon' : 'image' }}</span>
+                <span>No {{ $mediaLabel }}</span>
             @endif
         </div>
         <div class="admin-media-current-meta">
@@ -43,7 +47,7 @@
             <button class="admin-icon-button" type="button" data-media-dialog-close aria-label="Close media library">&times;</button>
         </div>
         <div class="admin-media-dialog-search">
-            <input type="search" placeholder="Search images" data-media-search>
+            <input type="search" placeholder="Search media" data-media-search>
         </div>
         <div class="admin-media-library-grid">
             @forelse ($allowedAssets as $asset)
@@ -51,6 +55,8 @@
                 <button class="admin-media-choice {{ $selectedId === $asset->id ? 'selected' : '' }}" type="button" wire:click="{{ $selectAction($asset->id) }}" data-media-choice data-media-title="{{ strtolower($asset->title) }}">
                     @if (str_starts_with($assetMedia?->mime_type ?? '', 'image/'))
                         <img src="{{ $asset->url('thumb') ?: $asset->url() }}" alt="">
+                    @elseif (str_starts_with($assetMedia?->mime_type ?? '', 'video/'))
+                        <video src="{{ $asset->url() }}" muted playsinline preload="metadata"></video>
                     @else
                         <span>{{ strtoupper($asset->kind->value) }}</span>
                     @endif

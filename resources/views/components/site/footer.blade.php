@@ -7,6 +7,9 @@
     $marquee = $settings['footer.marquee_text'] ?? 'DMV';
     $marqueeSpeed = max(10, min(120, (int) ($settings['footer.marquee_speed'] ?? 40)));
     $homeUrl = PublicInteractionNormalizer::url('/#home');
+    $footerLinkText = trim((string) ($settings['footer.link_text'] ?? ''));
+    $footerLinkUrl = trim((string) ($settings['footer.link_url'] ?? ''));
+    $footerLinkUrl = $footerLinkUrl !== '' ? PublicInteractionNormalizer::url($footerLinkUrl) : '';
 @endphp
 <footer class="site-footer" id="footer">
     <div class="footer-banner">
@@ -86,7 +89,32 @@
     <div class="footer-bottom">
         <div class="container">
             <p>&copy; <span data-current-year>{{ now()->year }}</span> {{ $settings['footer.copyright'] ?? 'DMV Warriors Basketball. All Rights Reserved.' }}</p>
-            <p>{{ $settings['footer.values'] ?? 'Discipline. Teamwork. Community. Excellence.' }}</p>
+            <p>
+                @if ($footerLinkText === '' && $footerLinkUrl !== '' && $footerLinkUrl !== '#')
+                    <a
+                        href="{{ $footerLinkUrl }}"
+                        @if(PublicInteractionNormalizer::isInternal($footerLinkUrl))
+                            wire:navigate
+                        @else
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        @endif
+                    >{{ $settings['footer.values'] ?? 'Discipline. Teamwork. Community. Excellence.' }}</a>
+                @else
+                    {{ $settings['footer.values'] ?? 'Discipline. Teamwork. Community. Excellence.' }}
+                    @if ($footerLinkText !== '' && $footerLinkUrl !== '' && $footerLinkUrl !== '#')
+                        <a
+                            href="{{ $footerLinkUrl }}"
+                            @if(PublicInteractionNormalizer::isInternal($footerLinkUrl))
+                                wire:navigate
+                            @else
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            @endif
+                        >{{ $footerLinkText }}</a>
+                    @endif
+                @endif
+            </p>
         </div>
     </div>
 </footer>

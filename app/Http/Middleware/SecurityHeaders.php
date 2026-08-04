@@ -21,6 +21,7 @@ class SecurityHeaders
         $turnstile = config('services.turnstile.enabled')
             ? ' https://challenges.cloudflare.com'
             : '';
+        $instagramImages = ' https://*.cdninstagram.com https://*.fbcdn.net';
 
         if ($this->isHtmlResponse($response)) {
             $response->setContent(
@@ -39,7 +40,7 @@ class SecurityHeaders
         $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin');
         $response->headers->set(
             'Content-Security-Policy',
-            "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'nonce-{$nonce}'{$turnstile}; script-src-attr 'none'; connect-src 'self'{$turnstile}; frame-src 'self'{$turnstile}; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+            "default-src 'self'; img-src 'self' data: blob:{$instagramImages}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'nonce-{$nonce}'{$turnstile}; script-src-attr 'none'; connect-src 'self'{$turnstile}; frame-src 'self'{$turnstile}; object-src 'none'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
         );
 
         if ($this->containsSensitiveContent($request)) {

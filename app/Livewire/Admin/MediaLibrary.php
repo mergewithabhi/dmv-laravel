@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\MediaAsset;
+use App\Models\GalleryItem;
 use App\Models\NavigationItem;
 use App\Models\Page;
 use App\Models\PageSection;
@@ -99,6 +100,7 @@ class MediaLibrary extends Component
             $mime === 'image/webp' => 'webp',
             $mime === 'image/gif' => 'gif',
             $mime === 'video/mp4' => 'mp4',
+            $mime === 'video/quicktime' => 'mov',
             $mime === 'video/webm' => 'webm',
             $mime === 'application/pdf' => 'pdf',
             $mime === 'text/calendar' => 'ics',
@@ -252,6 +254,7 @@ class MediaLibrary extends Component
                 ->where('type', 'media')
                 ->get(['value'])
                 ->contains(fn (SiteSetting $setting): bool => (int) ($setting->value['value'] ?? 0) === $asset->id),
+            GalleryItem::query()->where('media_asset_id', $asset->id)->exists(),
         ];
 
         if (in_array(true, $explicit, true)) {

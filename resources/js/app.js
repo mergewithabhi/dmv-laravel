@@ -2,12 +2,15 @@ import { initializeHeader } from "./site/header.js";
 import { initializeMain, initializePartnerCarousels } from "./site/main.js";
 import { initializeFooter } from "./site/footer.js";
 import { initializeSchedule } from "./site/schedule.js";
+import { initializeGalleryLightboxes } from "./site/gallery.js";
+import { initializeConsentControls } from "./site/forms.js";
 import { initializeAnimations } from "./site/animations.js";
 import { initializeAdminActions } from "./admin-actions.js";
 import { initializeAdminEditor } from "./admin-editor.js";
 import { initializeAdminMediaPicker } from "./admin-media-picker.js";
 import { initializeAdminAuth } from "./admin-auth.js";
 import { initializeAdminNavigation } from "./admin-navigation.js";
+import { initializeAdminGalleryUpload } from "./admin-gallery-upload.js";
 import { initializeConfirmDialog } from "./confirm-dialog.js";
 import { applicationUrl, normalizeInternalLinks } from "./site/url.js";
 
@@ -23,6 +26,8 @@ function initializeSite() {
     initializeHeader();
     initializeMain();
     initializeSchedule();
+    initializeGalleryLightboxes();
+    initializeConsentControls();
     initializeFooter();
     initializeAnimations();
     initializeConfirmDialog();
@@ -31,6 +36,7 @@ function initializeSite() {
     initializeAdminMediaPicker();
     initializeAdminAuth();
     initializeAdminNavigation();
+    initializeAdminGalleryUpload();
     initializeTurnstile();
 }
 
@@ -66,6 +72,13 @@ document.addEventListener("livewire:navigated", () => {
 });
 
 document.addEventListener("livewire:init", () => {
+    window.Livewire.hook("commit", ({ succeed }) => {
+        succeed(() => requestAnimationFrame(() => {
+            initializeGalleryLightboxes();
+            initializeConsentControls();
+        }));
+    });
+
     window.Livewire.on("site-form-complete", () => {
         requestAnimationFrame(() => {
             document.querySelector("[data-livewire-form] [aria-live='polite']")?.focus?.();

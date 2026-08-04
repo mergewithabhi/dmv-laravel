@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\InstagramConnectionController;
 use App\Http\Controllers\PreviewPageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SponsorPackController;
 use App\Livewire\Admin\AuditLog;
 use App\Livewire\Admin\ContentPermissionsEditor;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\GalleryManager;
 use App\Livewire\Admin\MediaLibrary;
 use App\Livewire\Admin\NewsletterSubscribers;
 use App\Livewire\Admin\PageEditor;
@@ -17,6 +19,7 @@ use App\Livewire\Admin\SettingsEditor;
 use App\Livewire\Admin\SubmissionsInbox;
 use App\Livewire\Admin\UsersManager;
 use App\Livewire\Site\GameShow;
+use App\Livewire\Site\GalleryIndex;
 use App\Livewire\Site\NewsIndex;
 use App\Livewire\Site\NewsShow;
 use App\Livewire\Site\PlayerShow;
@@ -64,6 +67,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::get('/media', MediaLibrary::class)
             ->middleware('permission:manage media')
             ->name('media');
+        Route::get('/gallery', GalleryManager::class)
+            ->middleware('permission:manage media')
+            ->name('gallery');
         Route::get('/content/{resource}', ResourceManager::class)->name('resources');
         Route::get('/submissions', SubmissionsInbox::class)
             ->middleware('permission:manage submissions')
@@ -77,6 +83,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         Route::get('/settings', SettingsEditor::class)
             ->middleware('permission:manage settings')
             ->name('settings');
+        Route::post('/settings/instagram', [InstagramConnectionController::class, 'store'])
+            ->middleware('permission:manage settings')
+            ->name('instagram.store');
+        Route::delete('/settings/instagram', [InstagramConnectionController::class, 'destroy'])
+            ->middleware('permission:manage settings')
+            ->name('instagram.destroy');
         Route::get('/users', UsersManager::class)
             ->middleware(['permission:manage users', 'password.confirm'])
             ->name('users');
@@ -90,6 +102,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 });
 
 Route::get('/news', NewsIndex::class)->name('news.index');
+Route::get('/gallery', GalleryIndex::class)->name('gallery.index');
 Route::get('/news/{post:slug}', NewsShow::class)->name('news.show');
 Route::get('/players/{person:slug}', PlayerShow::class)->name('players.show');
 Route::get('/games/{game:slug}', GameShow::class)->name('games.show');

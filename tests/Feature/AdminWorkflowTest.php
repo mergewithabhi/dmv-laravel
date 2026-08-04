@@ -132,6 +132,36 @@ class AdminWorkflowTest extends TestCase
         $this->assertSame('Changed elsewhere', $setting->refresh()->value['value']);
     }
 
+    public function test_settings_editor_accepts_internal_links_and_ignores_migration_markers(): void
+    {
+        $administrator = $this->cmsUser(['manage settings'], 'Settings Administrator');
+        $link = SiteSetting::query()->create([
+            'group' => 'tickets',
+            'key' => 'tickets.global_url',
+            'label' => 'Global ticket URL',
+            'type' => 'url',
+            'value' => ['value' => '/schedule'],
+        ]);
+        $marker = SiteSetting::query()->create([
+            'group' => 'migration',
+            'key' => 'migration.complete',
+            'label' => 'Migration complete',
+            'type' => 'boolean',
+            'value' => ['value' => true],
+        ]);
+
+        Livewire::actingAs($administrator)
+            ->test(SettingsEditor::class)
+            ->assertSet("values.{$link->id}", '/schedule')
+            ->assertSet("values.{$marker->id}", null)
+            ->set("values.{$link->id}", '/tickets')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertSame('/tickets', $link->refresh()->value['value']);
+        $this->assertTrue($marker->refresh()->value['value']);
+    }
+
     public function test_generic_resource_revision_can_be_restored(): void
     {
         $administrator = $this->cmsUser(['manage schedule'], 'Schedule Administrator');
