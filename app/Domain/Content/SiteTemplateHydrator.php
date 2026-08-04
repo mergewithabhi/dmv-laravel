@@ -4,6 +4,7 @@ namespace App\Domain\Content;
 
 use App\Enums\GameStatus;
 use App\Models\Game;
+use App\Models\GalleryItem;
 use App\Models\Post;
 use App\Models\Season;
 use App\Models\SocialLink;
@@ -156,6 +157,14 @@ class SiteTemplateHydrator
             ->where('is_leadership', true)
             ->orderBy('position_order')
             ->get() ?? collect();
+        $galleryImages = GalleryItem::query()
+            ->published()
+            ->whereHas('mediaAsset', fn ($query) => $query->where('kind', 'image'))
+            ->with('mediaAsset.media')
+            ->orderBy('position')
+            ->orderByDesc('created_at')
+            ->limit(8)
+            ->get();
 
         $this->replaceClass(
             $document,
@@ -163,6 +172,29 @@ class SiteTemplateHydrator
             'leadership-grid',
             view('site.partials.leadership', compact('staff'))->render()
         );
+
+        $basketballIcon = $this->first(
+            $document,
+            $root,
+            ".//*[contains(concat(' ', normalize-space(@class), ' '), ' about-why-grid ')]/article[1]/img[1]"
+        );
+        $basketballIcon?->setAttribute('src', asset('assets/icons/basketball-outline.svg'));
+
+        if ($galleryImages->isNotEmpty()) {
+            $gallery = $this->first(
+                $document,
+                $root,
+                ".//*[contains(concat(' ', normalize-space(@class), ' '), ' inside-gallery ')]/div[1]"
+            );
+
+            if ($gallery) {
+                $this->replaceInner(
+                    $document,
+                    $gallery,
+                    view('site.partials.inside-gallery', compact('galleryImages'))->render()
+                );
+            }
+        }
     }
 
     private function hydrateRoster(DOMDocument $document, DOMElement $root, ?Season $season): void

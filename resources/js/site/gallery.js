@@ -108,5 +108,13 @@ export function initializeGalleryLightboxes() {
             closeDialog();
             galleryController?.abort();
         }, { once: true, signal });
+
+        const requestedItem = new URL(window.location.href).searchParams.get("item");
+        const requestedTrigger = requestedItem
+            ? triggers.find((trigger) => trigger.dataset.galleryId === requestedItem)
+            : null;
+        if (requestedTrigger) {
+            requestAnimationFrame(() => requestedTrigger.click());
+        }
     });
 }

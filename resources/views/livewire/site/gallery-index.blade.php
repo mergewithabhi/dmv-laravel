@@ -1,5 +1,15 @@
 <main id="site-main" class="dynamic-page gallery-page">
-    <header class="content-page-hero">
+    <header class="content-page-hero gallery-hero">
+        <img
+            class="gallery-hero-image"
+            src="{{ asset('assets/gallery-hero-banner.webp') }}"
+            alt=""
+            aria-hidden="true"
+            width="1600"
+            height="854"
+            decoding="async"
+            fetchpriority="high"
+        >
         <div class="container">
             <span>DMV Warriors</span>
             <h1>Gallery</h1>
@@ -34,6 +44,7 @@
                         type="button"
                         aria-label="Open {{ $isVideo ? 'video' : 'full-size image' }}: {{ $item->title }}"
                         data-gallery-open
+                        data-gallery-id="{{ $item->id }}"
                         data-gallery-type="{{ $isVideo ? 'video' : 'image' }}"
                         data-gallery-src="{{ $item->mediaAsset->url() }}"
                         data-gallery-alt="{{ $item->alt_text ?: $item->mediaAsset->alt_text }}"

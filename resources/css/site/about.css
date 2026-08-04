@@ -596,19 +596,58 @@ body[data-page="about"] #site-main {
 .about-family {
   margin-top: 20px;
   display: grid;
-  grid-template-columns: 1fr 1.06fr;
-  gap: 24px;
+  grid-template-columns: 1fr;
 }
 
 .inside-gallery > h2 {
-  margin-bottom: 12px;
+  margin: 0;
   font-size: 22px;
 }
 
-.inside-gallery > div {
+.inside-gallery {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.inside-gallery-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--red);
+  font-family: var(--display);
+  font-size: var(--font-caption);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.inside-gallery-view-all img {
+  width: 15px;
+  height: 15px;
+  transition: transform 160ms ease;
+}
+
+.inside-gallery-view-all:hover img {
+  transform: translateX(3px);
+}
+
+.inside-gallery > div {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 8px;
+}
+
+.inside-gallery-item {
+  display: block;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.inside-gallery-item:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
 }
 
 .inside-gallery .media-placeholder,
@@ -620,16 +659,16 @@ body[data-page="about"] #site-main {
   object-fit: cover;
 }
 
+.inside-gallery-item .family-gallery-image {
+  transition: transform 180ms ease;
+}
+
+.inside-gallery-item:hover .family-gallery-image {
+  transform: scale(1.04);
+}
+
 .family-cta {
-  position: relative;
-  min-height: 190px;
-  padding: 25px 210px 22px 28px;
-  overflow: hidden;
-  border-radius: 6px;
-  color: #fff;
-  background:
-    linear-gradient(100deg, #a50006, #ee171f),
-    repeating-linear-gradient(135deg, transparent 0 10px, rgba(255,255,255,.05) 10px 11px);
+  display: none;
 }
 
 .family-cta > div {
@@ -927,6 +966,10 @@ body[data-page="about"] #site-main {
 
   .about-family {
     grid-template-columns: 1fr;
+  }
+
+  .inside-gallery > div {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .inside-gallery .media-placeholder,

@@ -57,7 +57,10 @@
                         href="{{ $itemUrl }}"
                         @if(PublicInteractionNormalizer::isInternal($itemUrl) && $item->target !== '_blank') wire:navigate @endif
                         @if($item->target === '_blank') target="_blank" rel="noopener noreferrer" @endif
-                    >{{ $item->label }}</a>
+                    >
+                        <x-site.nav-icon :url="$item->url" />
+                        <span>{{ $item->label }}</span>
+                    </a>
                 @endforeach
             </div>
         </div>

@@ -14,7 +14,7 @@ class AuthenticationSecurityTest extends TestCase
 {
     use CreatesCmsUsers, RefreshDatabase;
 
-    public function test_password_reset_response_does_not_reveal_account_existence(): void
+    public function test_password_reset_reports_an_unknown_user(): void
     {
         Notification::fake();
         $user = User::factory()->create(['email' => 'known@example.test']);
@@ -27,12 +27,10 @@ class AuthenticationSecurityTest extends TestCase
         ]);
 
         $knownResponse->assertOk();
-        $unknownResponse->assertOk();
-        $this->assertSame($knownResponse->json(), $unknownResponse->json());
-        $this->assertSame(
-            ['message' => trans('passwords.sent')],
-            $unknownResponse->json()
-        );
+        $unknownResponse
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('email')
+            ->assertJsonPath('errors.email.0', 'User not found.');
         Notification::assertSentTo($user, ResetPassword::class);
         $this->assertSame(1, DB::table('password_reset_tokens')->count());
     }

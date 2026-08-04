@@ -33,13 +33,23 @@
 
         <nav id="primary-navigation" class="primary-nav" aria-label="Primary navigation">
             @foreach ($navigation as $item)
-                @php($itemUrl = PublicInteractionNormalizer::url($item->url))
+                @php
+                    $itemUrl = PublicInteractionNormalizer::url($item->url);
+                    $itemPath = trim(strtolower((string) (parse_url($item->url, PHP_URL_PATH) ?: '/')), '/');
+                    $itemFragment = strtolower((string) (parse_url($item->url, PHP_URL_FRAGMENT) ?: ''));
+                    $isPoliciesLink = ($itemPath === '' && $itemFragment === 'footer')
+                        || in_array($itemPath, ['policies', 'policy', 'privacy', 'terms'], true);
+                @endphp
+                @continue($isPoliciesLink)
                 <a
                     data-page-link="{{ trim(parse_url($item->url, PHP_URL_PATH) ?: '/', '/') ?: 'home' }}"
                     href="{{ $itemUrl }}"
                     @if(PublicInteractionNormalizer::isInternal($itemUrl) && $item->target !== '_blank') wire:navigate @endif
                     @if($item->target === '_blank') target="_blank" rel="noopener noreferrer" @endif
-                >{{ $item->label }}</a>
+                >
+                    <x-site.nav-icon :url="$item->url" />
+                    <span>{{ $item->label }}</span>
+                </a>
             @endforeach
         </nav>
 

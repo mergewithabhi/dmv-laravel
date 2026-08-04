@@ -2,17 +2,23 @@
 
 namespace App\Http\Responses;
 
-use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
 
 class AnonymousPasswordResetLinkResponse implements FailedPasswordResetLinkRequestResponse
 {
     public function toResponse($request)
     {
-        $message = trans('passwords.sent');
+        $message = 'User not found.';
 
-        return $request->wantsJson()
-            ? new JsonResponse(['message' => $message], 200)
-            : back()->withInput($request->only('email'))->with('status', $message);
+        if ($request->wantsJson()) {
+            throw ValidationException::withMessages([
+                'email' => [$message],
+            ]);
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => $message]);
     }
 }

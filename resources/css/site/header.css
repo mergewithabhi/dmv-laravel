@@ -18,14 +18,16 @@
 }
 
 .brand {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   width: fit-content;
 }
 
 .brand img {
-  width: 76px;
-  height: 76px;
+  width: 96px;
+  height: 96px;
   object-fit: contain;
 }
 
@@ -39,9 +41,18 @@
 .primary-nav a {
   position: relative;
   padding: 32px 0 29px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: var(--font-small);
   font-weight: 600;
   white-space: nowrap;
+}
+
+.primary-nav .nav-link-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
 }
 
 .primary-nav a::after {
@@ -68,7 +79,16 @@
 }
 
 .header-ticket {
+  width: 100%;
   justify-self: end;
+}
+
+.button.header-ticket:hover {
+  transform: none;
+}
+
+.button.header-ticket:active {
+  transform: scale(.98);
 }
 
 .nav-toggle {

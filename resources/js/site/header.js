@@ -96,7 +96,6 @@ export function initializeHeader() {
 
     document.addEventListener("livewire:navigating", () => {
       closeNavigation();
-      headerController?.abort();
     }, { once: true, signal });
   }
 

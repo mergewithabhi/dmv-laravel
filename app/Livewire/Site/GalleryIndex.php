@@ -21,6 +21,9 @@ class GalleryIndex extends Component
     #[Url(except: 'recent')]
     public string $sort = 'recent';
 
+    #[Url(except: null)]
+    public ?int $item = null;
+
     public function mount(): void
     {
         $this->normalizeFilters();
@@ -53,6 +56,10 @@ class GalleryIndex extends Component
                 )
             )
             ->when(
+                $this->item,
+                fn (Builder $query) => $query->orderByRaw('gallery_items.id = ? DESC', [$this->item])
+            )
+            ->when(
                 $this->sort === 'oldest',
                 fn (Builder $query) => $query->oldest('created_at')->oldest('id'),
                 fn (Builder $query) => $query->latest('created_at')->latest('id')
@@ -82,6 +89,9 @@ class GalleryIndex extends Component
         }
         if (! in_array($this->sort, ['recent', 'oldest'], true)) {
             $this->sort = 'recent';
+        }
+        if ($this->item !== null && $this->item < 1) {
+            $this->item = null;
         }
     }
 }
