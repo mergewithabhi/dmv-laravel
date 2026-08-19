@@ -141,7 +141,7 @@
                                 <button
                                     class="admin-button danger small"
                                     type="button"
-                                    wire:click="delete({{ $subscriber->id }})"
+                                    wire:click="destroy({{ $subscriber->id }})"
                                     data-confirm-title="Delete subscriber?"
                                     data-confirm-message="Permanently delete this newsletter subscriber? This cannot be undone."
                                     data-confirm-button="Delete subscriber"

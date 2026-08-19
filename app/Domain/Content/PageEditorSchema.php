@@ -54,6 +54,7 @@ class PageEditorSchema
         $counts = [];
         $imageNumber = 0;
         $buttonNumber = 0;
+        $statTextNumber = 0;
         $lastImageNumber = null;
         $result = [];
 
@@ -91,6 +92,20 @@ class PageEditorSchema
             }
 
             $lastImageNumber = null;
+            $currentValue = trim((string) ($section->payload[$fieldId] ?? ''));
+            $context = mb_strlen($currentValue) > 38 ? mb_substr($currentValue, 0, 35).'...' : $currentValue;
+
+            if ($this->isStatisticTextField($section, $input, $attribute)) {
+                $statTextNumber++;
+                $statIndex = intdiv($statTextNumber + 1, 2);
+                $statPart = $statTextNumber % 2 === 1 ? 'value' : 'label';
+                $field['editor_label'] = "Statistic {$statIndex} {$statPart}".($context !== '' ? ": {$context}" : '');
+                $field['editor_group'] = 'content';
+                $result[$fieldId] = $field;
+
+                continue;
+            }
+
             if ($input === 'url' || $attribute === 'href') {
                 $buttonNumber++;
                 $field['editor_label'] = $buttonNumber === 1 ? 'Button link' : "Button {$buttonNumber} link";
@@ -112,8 +127,6 @@ class PageEditorSchema
                 default => 'Text',
             };
             $counts[$role] = ($counts[$role] ?? 0) + 1;
-            $currentValue = trim((string) ($section->payload[$fieldId] ?? ''));
-            $context = mb_strlen($currentValue) > 38 ? mb_substr($currentValue, 0, 35).'...' : $currentValue;
             $field['editor_label'] = $context !== '' && ! in_array($role, ['Description', 'Text', 'Value'], true)
                 ? "{$role}: {$context}"
                 : ($counts[$role] === 1 ? $role : "{$role} {$counts[$role]}");
@@ -122,6 +135,13 @@ class PageEditorSchema
         }
 
         return $result;
+    }
+
+    private function isStatisticTextField(PageSection $section, string $input, ?string $attribute): bool
+    {
+        return str_contains($section->section_key, 'stat')
+            && $input === 'text'
+            && $attribute === null;
     }
 
     private function dynamicFieldIds(string $templateKey, PageSection $section, array $fields): array

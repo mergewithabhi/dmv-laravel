@@ -55,7 +55,7 @@
                                     <button
                                         class="admin-button danger small"
                                         type="button"
-                                        wire:click="delete({{ $submission->id }})"
+                                        wire:click="destroy({{ $submission->id }})"
                                         data-confirm-title="Delete submission?"
                                         data-confirm-message="Permanently delete this submission? This cannot be undone."
                                         data-confirm-button="Delete submission"

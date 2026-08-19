@@ -25,7 +25,12 @@
                     $manageUrl = $this->manageUrl($section->section_key);
                 @endphp
                 @continue($editableFields->isEmpty() && ! $this->canEditSection($section->id) && ! $manageUrl)
-                <details class="editor-section" @if($loop->first) open @endif>
+                <details
+                    class="editor-section"
+                    wire:key="page-editor-section-{{ $section->id }}"
+                    wire:ignore.self
+                    @if($loop->first) open @endif
+                >
                     <summary>
                         <span>
                             <strong>{{ $section->label }}</strong>
@@ -90,7 +95,7 @@
             @endforeach
 
             @if ($this->canEditPageSettings())
-                <details class="editor-section advanced-settings">
+                <details class="editor-section advanced-settings" wire:key="page-editor-advanced-settings" wire:ignore.self>
                     <summary>
                         <span><strong>Advanced page settings</strong><small>Search and social sharing</small></span>
                         <span class="editor-section-chevron" aria-hidden="true"></span>
@@ -145,7 +150,7 @@
     </div>
 
     @if ($this->canEditPageSettings())
-        <details class="admin-panel revision-panel">
+        <details class="admin-panel revision-panel" wire:key="page-editor-revisions" wire:ignore.self>
             <summary class="admin-panel-header"><h3>Previous versions</h3><span>{{ $revisions->count() }} saved</span></summary>
             <div class="admin-table-wrap">
                 <table class="admin-table">

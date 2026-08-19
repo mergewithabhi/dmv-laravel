@@ -161,7 +161,11 @@ class ResourceRegistry
                     'rank' => $this->field('Rank', 'number', 'required|integer|min:1'),
                     'wins' => $this->field('Wins', 'number', 'required|integer|min:0'),
                     'losses' => $this->field('Losses', 'number', 'required|integer|min:0'),
-                    'win_percentage' => $this->field('Win percentage', 'number', 'required|numeric|min:0|max:1'),
+                    'win_percentage' => $this->field('Win percentage', 'number', 'required|numeric|min:0|max:1', attributes: [
+                        'min' => '0',
+                        'max' => '1',
+                        'step' => '0.001',
+                    ], help: 'Format: enter a ratio from 0.000 to 1.000. Example: 0.800 = 80%.'),
                     'position_order' => $this->field('Display order', 'number', 'required|integer|min:0'),
                 ],
             ],
@@ -375,8 +379,10 @@ class ResourceRegistry
         string $type,
         string $rules,
         ?string $options = null,
-        bool $full = false
+        bool $full = false,
+        array $attributes = [],
+        ?string $help = null
     ): array {
-        return compact('label', 'type', 'rules', 'options', 'full');
+        return compact('label', 'type', 'rules', 'options', 'full', 'attributes', 'help');
     }
 }

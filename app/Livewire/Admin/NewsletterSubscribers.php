@@ -134,7 +134,7 @@ class NewsletterSubscribers extends Component
         session()->flash('success', 'Subscriber synchronization queued.');
     }
 
-    public function delete(int $id): void
+    public function destroy(int $id): void
     {
         $this->authorizeAccess();
         $subscriber = NewsletterSubscriber::query()->findOrFail($id);

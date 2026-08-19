@@ -6,21 +6,6 @@ export function initializeMain() {
 }
 
 function initializeTemplateFallbacks() {
-  const calendarStart = window.DMVCms?.calendarStart;
-  const calendarYear = typeof calendarStart === "string"
-    ? Number.parseInt(calendarStart.slice(0, 4), 10)
-    : Number.NaN;
-  const seasonYear = Number.isFinite(calendarYear)
-    ? calendarYear
-    : new Date().getFullYear();
-
-  document.querySelectorAll('[data-current-season="year"]').forEach((element) => {
-    element.textContent = String(seasonYear);
-  });
-  document.querySelectorAll('[data-current-season="label"]').forEach((element) => {
-    element.textContent = element.textContent.replace(/\b20\d{2}\b/, String(seasonYear));
-  });
-
   document.querySelectorAll("a[data-safe-href]").forEach((link) => {
     const currentHref = link.getAttribute("href")?.trim();
     const fallbackHref = link.dataset.safeHref?.trim();

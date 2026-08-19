@@ -248,7 +248,7 @@ class UsersManager extends Component
         session()->flash('success', 'Two-factor authentication was reset.');
     }
 
-    public function delete(int $id): void
+    public function destroy(int $id): void
     {
         $this->authorizeSensitiveAccess();
         abort_if($id === auth()->id(), 422, 'You cannot delete your own account.');

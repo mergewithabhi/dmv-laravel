@@ -191,7 +191,7 @@
                                     <button
                                         class="admin-button danger small"
                                         type="button"
-                                        wire:click="delete({{ $row->getKey() }})"
+                                        wire:click="destroy({{ $row->getKey() }})"
                                         data-confirm-title="Move record to Trash?"
                                         data-confirm-message="The record will be hidden from the website and can be restored later."
                                         data-confirm-button="Move to Trash"

@@ -229,7 +229,7 @@ class GalleryManager extends Component
         session()->flash('success', 'Gallery item saved.');
     }
 
-    public function delete(int $id): void
+    public function destroy(int $id): void
     {
         $this->authorizeAccess();
         $item = GalleryItem::query()->findOrFail($id);

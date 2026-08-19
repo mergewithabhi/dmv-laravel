@@ -1,6 +1,7 @@
 @php
     $isMedia = in_array($field['options'], ['media_images', 'media_icons'], true);
     $isColor = str_ends_with($key, '_color');
+    $inputAttributes = new \Illuminate\View\ComponentAttributeBag($field['attributes'] ?? []);
 @endphp
 <div class="admin-field {{ $field['full'] || $isMedia || $field['type'] === 'json' ? 'full' : '' }}">
     @if ($field['type'] === 'checkbox')
@@ -10,7 +11,15 @@
             {{ $field['label'] }}
         </label>
     @else
-        <label for="field-{{ $key }}">{{ $field['label'] }}</label>
+        <label class="admin-field-label" for="field-{{ $key }}">
+            <span>{{ $field['label'] }}</span>
+            @if (! empty($field['help']))
+                <span class="admin-field-info" tabindex="0" title="{{ $field['help'] }}" aria-label="{{ $field['help'] }}">
+                    i
+                    <span class="admin-field-tooltip" role="tooltip">{{ $field['help'] }}</span>
+                </span>
+            @endif
+        </label>
         @if ($isMedia)
             @php
                 $inputKind = $field['options'] === 'media_icons' ? 'icon' : 'image';
@@ -53,7 +62,7 @@
                 <input aria-label="{{ $field['label'] }} value" wire:model.live="form.{{ $key }}">
             </div>
         @else
-            <input id="field-{{ $key }}" type="{{ $field['type'] }}" wire:model="form.{{ $key }}">
+            <input id="field-{{ $key }}" type="{{ $field['type'] }}" wire:model="form.{{ $key }}" {{ $inputAttributes }}>
         @endif
     @endif
     @error('form.'.$key)<span class="admin-field-error">{{ $message }}</span>@enderror

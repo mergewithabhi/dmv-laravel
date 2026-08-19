@@ -142,7 +142,7 @@
                             <button
                                 class="admin-button danger small"
                                 type="button"
-                                wire:click="delete({{ $asset->id }})"
+                                wire:click="destroy({{ $asset->id }})"
                                 data-confirm-title="Delete asset?"
                                 data-confirm-message="Delete this unused asset? This cannot be undone."
                                 data-confirm-button="Delete asset"

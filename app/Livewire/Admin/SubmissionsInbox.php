@@ -52,7 +52,7 @@ class SubmissionsInbox extends Component
         $this->selectedId = null;
     }
 
-    public function delete(int $id): void
+    public function destroy(int $id): void
     {
         $this->authorizeAccess();
         $submission = FormSubmission::query()->findOrFail($id);

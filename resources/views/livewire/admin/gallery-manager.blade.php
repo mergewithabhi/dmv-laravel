@@ -241,7 +241,7 @@
                                     <button
                                         class="admin-button danger small"
                                         type="button"
-                                        wire:click="delete({{ $item->id }})"
+                                        wire:click="destroy({{ $item->id }})"
                                         data-confirm-title="Remove gallery item?"
                                         data-confirm-message="This item will be removed from the public gallery. Its file will remain in the media library."
                                         data-confirm-button="Remove item"

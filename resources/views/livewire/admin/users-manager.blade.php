@@ -215,7 +215,7 @@
                                     <button
                                         class="admin-button danger small"
                                         type="button"
-                                        wire:click="delete({{ $user->id }})"
+                                        wire:click="destroy({{ $user->id }})"
                                         data-confirm-title="Delete CMS user?"
                                         data-confirm-message="This user will be permanently deleted and their active sessions revoked."
                                         data-confirm-button="Delete user"

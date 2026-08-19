@@ -214,7 +214,7 @@ class MediaLibrary extends Component
         session()->flash('success', 'Media metadata was saved.');
     }
 
-    public function delete(int $id): void
+    public function destroy(int $id): void
     {
         $this->authorizeAccess();
         $asset = MediaAsset::query()->findOrFail($id);

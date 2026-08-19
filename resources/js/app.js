@@ -16,6 +16,15 @@ import { applicationUrl, normalizeInternalLinks } from "./site/url.js";
 
 let initializedDocument = null;
 
+window.addEventListener("pageshow", (event) => {
+    if (!document.body.classList.contains("admin-body")) return;
+
+    const navigation = performance.getEntriesByType("navigation")[0];
+    if (event.persisted || navigation?.type === "back_forward") {
+        window.location.reload();
+    }
+});
+
 function initializeSite() {
     if (initializedDocument === document.body.dataset.navigationKey) {
         return;

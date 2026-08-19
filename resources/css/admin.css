@@ -1143,6 +1143,71 @@ body.admin-body {
     font-weight: 700;
 }
 
+.admin-field-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+}
+
+.admin-field-info {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #98a2b3;
+    border-radius: 50%;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    cursor: help;
+}
+
+.admin-field-info:focus {
+    outline: 2px solid rgb(23 92 211 / 22%);
+    outline-offset: 2px;
+}
+
+.admin-field-tooltip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 8px);
+    z-index: 20;
+    width: max-content;
+    max-width: 260px;
+    padding: 8px 10px;
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+    background: #101828;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+    transform: translateX(-50%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+}
+
+.admin-field-tooltip::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    border: 6px solid transparent;
+    border-top-color: #101828;
+    transform: translateX(-50%);
+}
+
+.admin-field-info:hover .admin-field-tooltip,
+.admin-field-info:focus .admin-field-tooltip {
+    opacity: 1;
+}
+
 .admin-field input,
 .admin-field select,
 .admin-field textarea {

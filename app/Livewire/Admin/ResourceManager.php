@@ -394,7 +394,7 @@ class ResourceManager extends Component
         unset($this->mediaUploads[$key]);
     }
 
-    public function delete(
+    public function destroy(
         int $id,
         ResourceRegistry $registry,
         ?SiteChromeService $chrome = null
